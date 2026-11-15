@@ -10,6 +10,19 @@ Xavier Torgerson's personal site and writing, served by GitHub Pages from this r
    posted yet" line the first time), and as an `<entry>` in `feed.xml`; set the feed's `<updated>`.
 3. Commit and push. Pages publishes in about a minute.
 
+## Murmuration
+
+`murmuration/` is a copy of two files, `index.html` and `og.png`, from the public
+[`murmuration`](https://github.com/xaviertorgerson/murmuration) repo, which is where the page is
+developed. Don't edit the copy here. To bring it up to date after that repo changes:
+
+```sh
+cp ../murmuration/index.html ../murmuration/og.png murmuration/
+git add murmuration && git commit -m "murmuration: sync with the murmuration repo" && git push
+```
+
+The page's canonical address, and the address in its link preview, is `https://xlt.pw/murmuration/`.
+
 ## What used to be here
 
 Until 2026-11-15, xlt.pw hosted the Handshake landing page proof of concept, its demo screens, an
