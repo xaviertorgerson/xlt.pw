@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Xavier Torgerson</title>
+  <link href="https://xlt.pw/"/>
+  <link rel="self" href="https://xlt.pw/feed.xml"/>
+  <id>https://xlt.pw/</id>
+  <updated>2026-11-15T00:00:00Z</updated>
+  <author><name>Xavier Torgerson</name></author>
+  <!-- One <entry> per post, newest first:
+  <entry>
+    <title>TITLE</title>
+    <link href="https://xlt.pw/writing/slug.html"/>
+    <id>https://xlt.pw/writing/slug.html</id>
+    <updated>YYYY-MM-DDT00:00:00Z</updated>
+    <summary>ONE SENTENCE</summary>
+  </entry>
+  -->
+</feed>
