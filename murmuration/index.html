@@ -734,17 +734,20 @@ void main(){
   }
 
   // a click or tap startles the birds near that spot
-  float clickHit = 0.0;
+  float clickHit = 0.0, clickSeed = 0.0;
   if (uClick.w > 0.0) {
     vec3 dk = p - uClick.xyz; float lk = length(dk);
     clickHit = uClick.w * (1.0 - smoothstep(uClickR * 0.4, uClickR, lk));
+    // (starlings: only the birds at the spot are startled outright; the rest hear of it from their neighbours, as a wave)
+    clickSeed = uSpecies == 0 ? uClick.w * (1.0 - smoothstep(uClickR * 0.12, uClickR * 0.3, lk)) : clickHit;
     direct += dk / (lk + 1e-3) * uFlee * 0.55 * clickHit;
   }
 
-  // fire-and-recover: panic passes neighbour to neighbour as a wave
-  float stim = (maxE * uExcite + fear * threat * 1.6 + clickHit * 2.0) * clamp(1.0 - 0.2 * bold, 0.5, 1.5);
-  if (rnd(hashu(uid * 2246822519u ^ st)) < uSpont) stim += 1.0;
-  charge += (stim - charge) * min(1.0, uDt / (uSpecies == 0 ? 0.26 : 0.05));
+  // fire-and-recover: panic passes neighbour to neighbour as a wave. A starling takes about 70 ms to pass it on, so with
+  // neighbours a metre off the wave crosses the flock at 15 m/s or so, a dark band (measured: 13 m/s, Procaccini et al. 2011).
+  float stim = (maxE * uExcite + fear * threat * 1.6 + clickSeed * 2.0) * clamp(1.0 - 0.2 * bold, 0.5, 1.5);
+  if (rnd(hashu(uid * 2246822519u ^ st)) < uSpont) { if (uSpecies == 0) charge = 1.0; else stim += 1.0; }
+  charge += (stim - charge) * min(1.0, uDt / (uSpecies == 0 ? 0.1 : 0.05));
   if (refr > 0.0) refr -= uDt;
   else if (charge > uThresh) { e = 1.0; refr = uRefract * (0.8 + 0.4 * tB); charge = 0.0; }
   e *= exp(-uDt / 0.3);
@@ -976,7 +979,18 @@ vec3 skyline(vec3 d, vec3 c, float camY, bool ground, float aa){
       float azr = az + 0.0012 * uSway * sin(uTime * 2.3 + az * 90.0) + 0.0006 * uSway * sin(uTime * 3.7 + az * 211.0);
       float H3 = 0.004 + 0.012 * fbm1(azr * 230.0) + 0.03 * pow(max(fbm1(azr * 640.0 + 3.0) - 0.5, 0.0) * 2.0, 2.0) - lift / 90.0;
       float below = smoothstep(horizon + aa, horizon - aa, el);
-      c = mix(c, gcol + hz * 0.06 * exp(min(el - horizon, 0.0) * 18.0), below);
+      // The marsh itself, placed in the world so that it slides past underneath: reed beds cut by pools and winding channels.
+      // The land is nearly black at dusk and the water holds the sky, which is what a roost looks like from above.
+      float t = max(camY, 0.6) / max(horizon - el, 1e-4);
+      vec2 wp = uCam.xz + d.xz * t + uSeed * 300.0;
+      float foot = t * aa / max(horizon - el, 0.03);                     // how much ground one pixel covers
+      float see = (1.0 - smoothstep(5.0, 28.0, foot)) * exp(-t * 0.0011);
+      float pool = smoothstep(0.57, 0.61, fbm(wp * 0.011));
+      float chan = 1.0 - smoothstep(0.010, 0.026, abs(fbm(wp * 0.0042 + 9.0) - 0.5));
+      float wet = max(pool, chan * 0.9) * see;
+      vec3 water = skyGrad(vec3(d.x, max(-d.y, 0.02), d.z)) * (0.1 + 0.9 * pow(1.0 - clamp(-d.y, 0.0, 1.0), 4.0)) + vec3(0.002, 0.003, 0.004);
+      vec3 land = gcol * (1.0 + see * (1.4 * fbm(wp * 0.06) - 0.5));
+      c = mix(c, mix(land, water, wet) + hz * 0.06 * exp(min(el - horizon, 0.0) * 18.0), below);
       c = mix(c, mistCol * 0.8, uMist * 0.45 * below * exp(-abs(el - horizon) * 60.0));
       c = mix(c, gcol, smoothstep(H3 + aa, H3 - aa, el) * smoothstep(-0.02, -0.002, el - H3 + 0.03));
     }
@@ -1252,7 +1266,9 @@ void agentFrame(out vec3 p, out vec3 F, out vec3 R, out vec3 U, out float phase,
   else {
     // bank into the turn it is making (turn momentum is already smoothed), plus a quick rock when startled
     float zig = uSpec == 1 ? sin(uTime * 9.0 + dot(p, vec3(0.21, 0.13, 0.17))) : sin((1.0 - e) * 6.2831853);
-    roll = clamp(atan(dot(steer, rt) * uBankGain, 9.8) + zig * e * uWaveAmt, -1.35, 1.35);
+    // (a starling a pixel or two across cannot show its roll; the body shader draws its flashed wing as a darker bird instead)
+    float rockK = uSpec == 1 ? 1.0 : smoothstep(2.5, 7.0, uSize * 1.9 * uPx / length(p - uCam));
+    roll = clamp(atan(dot(steer, rt) * uBankGain, 9.8) + zig * e * uWaveAmt * rockK, -1.35, 1.35);
   }
   float cr = cos(roll), sr = sin(roll);
   roll_ = roll; turn_ = dot(steer, rt);
@@ -1287,7 +1303,11 @@ void main(){
   float dist = length(p - uCam);
   float px = scale * 1.9 * uPx / dist;
   float k = clamp(1.7 / px, 1.0, 2.2);
-  vAlpha = min(1.0, 1.3 / (k * k));
+  // A startled bird rolls and shows the whole of its wings. From far off that is a bird that turns darker for a moment, and
+  // a wave of them is the dark band that runs through a real flock (Hemelrijk et al. 2015).
+  float flash = uPred == 1 ? 0.0 : e * uWaveAmt * (1.0 - smoothstep(2.5, 7.0, px));
+  vAlpha = min(1.0, 1.3 / (k * k) * (1.0 + 1.1 * flash));
+  k *= 1.0 + 0.22 * flash;
   // tiny birds hold still wings: flapping a few pixels only reads as flicker
   if (lodCull(px)) { gl_Position = vec4(2.0, 2.0, 2.0, 1.0); return; }
   vNear = smoothstep(5.0, 26.0, px); vLoc = aPos;
@@ -2557,7 +2577,10 @@ function simPass(dt, E){
   const wv = P.species === 'bird' ? stats.wave : null;
   gl.uniform4f(CUR.u.uWaveO, wv ? wv.o[0] : 0, wv ? wv.o[1] : 0, wv ? wv.o[2] : 0, wv ? wv.t0 : 0); u1f('uWaveCode', wv ? wv.code : -1);
   u1f('uTurnRate', Math.max(0.12, Math.min(1.3, 0.6 * 30 / (2.6 * Math.max(stats.spread, 4)))));
-  u1f('uExcite', P.panic); u1f('uThresh', 0.5); u1f('uRefract', 1.6); u1f('uWave', P.wave);
+  u1f('uExcite', P.panic); u1f('uThresh', 0.5); u1f('uWave', P.wave);
+  // a starling that has passed the alarm on ignores it until the wave has had time to leave the flock, so one startle is one
+  // wave and it cannot come round again; fish flash again sooner
+  u1f('uRefract', P.species === 'bird' ? Math.max(2, Math.min(8, 0.165 * stats.spread)) : 1.6);
   u1f('uSpont', P.ripples / 60 * dt / S.N); u1f('uBlind', sp.blind);
   const sc = SCENES[preset.scene];
   u1i('uObst', sc.obst || 0);
@@ -2822,7 +2845,7 @@ const CTRL = [
   {g: 'gFlock', k: 'jitter', label: 'Wobble', min: 0, max: 1.4, step: 0.01, info: 'Small random steering, stronger where neighbours disagree.'},
   {g: 'gFlock', k: 'mill', label: 'Milling', min: 0, max: 1.6, step: 0.01, only: 'fish', info: 'Fish circle a centre, forming a rotating ring.'},
   {g: 'gHunter', k: 'fear', label: 'Fear radius', min: 0.5, max: 2, step: 0.01, info: 'How far away birds notice the hunter or a click.'},
-  {g: 'gHunter', k: 'panic', label: 'Panic spread', min: 0, max: 1.6, step: 0.01, info: 'How readily a startle passes from bird to bird.'},
+  {g: 'gHunter', k: 'panic', label: 'Panic spread', min: 0, max: 1.6, step: 0.01, info: 'How readily a startle passes from bird to bird, and how fast it travels. Set low, it dies out near where it began.'},
   {g: 'gHunter', k: 'wave', label: 'Escape strength', min: 0.3, max: 1.6, step: 0.01, info: 'How sharply startled birds dodge and bank.'},
   {g: 'gHunter', k: 'ripples', label: 'Startles per minute', min: 0, max: 8, step: 0.5, f: (v) => (+v).toFixed(1), info: 'Startles that begin on their own somewhere in the flock, with no hunter.'},
 
@@ -3177,7 +3200,7 @@ const notes = {
       if (shape !== this.shape) { if (this.shape) note(shape === 'slab' ? 'The flock spreads out into a sheet' : 'The flock gathers into a ball'); this.shape = shape; }
     }
     // alarm, and parts breaking away
-    if (stats.alarm > 0.18 && simTime - this.alarmAt > 14) { this.alarmAt = simTime; note(bird ? 'A ripple of alarm runs through the flock' : 'A flash of alarm runs through the school'); }
+    if (stats.alarm > 0.18 && simTime - this.alarmAt > (bird ? 40 : 14)) { this.alarmAt = simTime; note(bird ? 'A dark band of alarm runs through the flock' : 'A flash of alarm runs through the school'); }
     const split = stats.mainFrac < 0.6;
     if (split !== this.split && simTime - this.splitAt > 6) { this.split = split; this.splitAt = simTime; note(split ? 'Part of the ' + one + ' breaks away' : 'The ' + one + ' closes up again'); }
   },
