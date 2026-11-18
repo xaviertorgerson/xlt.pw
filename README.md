@@ -23,6 +23,21 @@ git add murmuration && git commit -m "murmuration: sync with the murmuration rep
 
 The page's canonical address, and the address in its link preview, is `https://xlt.pw/murmuration/`.
 
+## Shadowlite
+
+`shadowlite/` is a copy of two files from the private
+[`shadowlite`](https://github.com/xaviertorgerson/shadowlite) repo, which is where the game is
+developed: `index.html` (that repo's built `dist/index.html`, the whole game in one file) and
+`og.png`. Don't edit the copy here. To bring it up to date after that repo changes:
+
+```sh
+(cd ../shadowlite && npm run build)
+cp ../shadowlite/dist/index.html ../shadowlite/og.png shadowlite/
+git add shadowlite && git commit -m "shadowlite: sync with the shadowlite repo" && git push
+```
+
+The page's canonical address, and the address in its link preview, is `https://xlt.pw/shadowlite/`.
+
 ## What used to be here
 
 Until 2026-11-15, xlt.pw hosted the Handshake landing page proof of concept, its demo screens, an
