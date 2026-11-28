@@ -14,7 +14,7 @@ This repo is a hosting mechanism, not a place where projects are documented.
   tags with an image (`og.png` when the page has none of its own), and a line in `sitemap.xml` and
   `llms.txt`. A page whose content is drawn by a script also carries that content as plain HTML.
 - Every page leads home: a project page credits Xavier Torgerson with a link to `https://xlt.pw`, and the
-  home page links to every project and to Variadic Group (`https://variadicgroup.com`), which links back.
+  home page links to every project (with a Source link where its repo is public) and to Variadic Group (`https://variadicgroup.com`), which links back.
 - A project is published at one address. If it moves to its own domain, its folder here goes and the
   Projects list links to the new address.
 - Nothing on the site is invented: no made-up numbers, testimonials or claims. No trackers or ads.
