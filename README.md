@@ -3,6 +3,14 @@
 Xavier Torgerson's personal site and writing, served by GitHub Pages from this repo (`CNAME` is
 `xlt.pw`; Cloudflare sits in front). Plain HTML and one stylesheet, nothing to build.
 
+## Hosted projects
+
+This repo is only the mechanism that puts projects on `xlt.pw`. A project folder here (for example
+`downtown-101/`) is a published copy of files from that project's own repo. The project's repo is
+where it is developed and where it describes itself: what it is, why it exists, how to run it and
+how to publish it. New projects get a folder and a line in the Projects list on the home page, and
+nothing in this README.
+
 ## Add a post
 
 1. Copy `writing/_post-template.html` to `writing/<slug>.html` and fill in the capitals.
@@ -50,11 +58,3 @@ earlier "ProLink" draft and an old Variadic Group pitch. They are kept, not lost
 `storytelling.html` (The Architecture of Story) stays at its address.
 
 The display face is Funnel Display, self-hosted under the SIL Open Font License (`fonts/`).
-
-## Downtown 101
-
-`downtown-101/` is one self-contained page, `index.html`, plus `og.png` for link previews: a checklist
-of 101 places to eat in downtown Manhattan. The list, the copy and the script are all in that file.
-Ticks and notes are stored in the visitor's own browser (`localStorage`); nothing is sent anywhere.
-
-The page's canonical address, and the address in its link preview, is `https://xlt.pw/downtown-101/`.
