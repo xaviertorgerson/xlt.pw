@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Downtown 101</title>
+<meta name="description" content="101 places to eat in downtown Manhattan, as a checklist to work through. No tasting menus, nothing you book a month out.">
+<link rel="canonical" href="https://xlt.pw/downtown-101/">
+<meta property="og:title" content="Downtown 101">
+<meta property="og:description" content="101 places to eat in downtown Manhattan, as a checklist to work through.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://xlt.pw/downtown-101/">
+<meta property="og:image" content="https://xlt.pw/downtown-101/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=Caveat:wght@600&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Layout idea: a subway system you eat through. Black sign bands, ten colored lines, every restaurant a station you fill in. Handwriting for what the two of you thought. */
+:root{
+  --paper:#f6f5f1; --card:#ffffff; --ink:#131316; --soft:#62626c; --line:#dddbd4;
+  --sign:#131316; --yellow:#fccc0a;
+  --sans:"Helvetica Neue",Helvetica,Arial,"Nimbus Sans",sans-serif;
+  --hand:"Caveat","Bradley Hand","Segoe Print",cursive;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){--paper:#0e0e11;--card:#19191e;--ink:#f3f2ee;--soft:#a3a3ad;--line:#2d2d34;--sign:#000;color-scheme:dark}
+}
+:root[data-theme="dark"]{--paper:#0e0e11;--card:#19191e;--ink:#f3f2ee;--soft:#a3a3ad;--line:#2d2d34;--sign:#000;color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}*{transition:none!important}}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.45}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+.wrap{max-width:900px;margin:0 auto;padding:0 18px}
+h1,h2,h3{margin:0;font-weight:700;letter-spacing:-.02em}
+.b{display:inline-grid;place-items:center;flex:none;width:1.7em;height:1.7em;border-radius:50%;background:var(--c);color:var(--t,#fff);font-weight:700;font-size:.82em;line-height:1;font-style:normal}
+.b.x{border-radius:3px;transform:rotate(45deg) scale(.8)}
+.b.x i{transform:rotate(-45deg);font-style:normal}
+
+/* sign */
+.sign{background:var(--sign);color:#fff;border-top:5px solid #fff;box-shadow:inset 0 6px 0 var(--sign);padding:26px 0 0}
+.sign h1{font-size:clamp(50px,13.5vw,132px);line-height:.86;letter-spacing:-.055em}
+.sign h1 span{color:var(--yellow)}
+.sign .say{font-size:clamp(16px,2.3vw,20px);color:#d6d6dc;max-width:31em;margin:14px 0 0}
+.tally{font-family:var(--hand);font-size:34px;line-height:1;color:var(--yellow);margin-top:12px;transform:rotate(-2deg);transform-origin:left}
+.stripes{display:flex;height:34px;margin-top:22px;gap:0}
+.stripes a{flex:var(--n);background:var(--c);color:var(--t);display:grid;place-items:center;font-weight:700;font-size:15px;text-decoration:none;position:relative;overflow:hidden}
+.stripes a::after{content:"";position:absolute;left:0;top:0;bottom:0;width:var(--p);background:rgba(0,0,0,.28)}
+.stripes a i{position:relative;z-index:1;font-style:normal}
+.tabs{position:sticky;top:0;z-index:20;background:var(--sign);border-top:1px solid #33333a}
+.tabs .wrap{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;padding-top:8px;padding-bottom:8px}
+.tabs .wrap::-webkit-scrollbar{display:none}
+.tab{flex:none;background:none;border:0;color:#b7b7c0;padding:7px 12px;border-radius:6px;font-weight:700;font-size:14.5px;text-decoration:none;white-space:nowrap}
+.tab[aria-current="page"]{background:#fff;color:#131316}
+
+/* list controls */
+.ctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:20px 0 0}
+.seg{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;background:var(--card)}
+.seg button{background:none;border:0;padding:6px 13px;font-size:14.5px;color:var(--soft)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.meals{display:flex;flex-wrap:wrap;gap:6px;margin-left:auto;align-items:center}
+.meal{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:5px 11px;font-size:14px}
+.meal[aria-pressed="true"]{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.go{background:var(--yellow);color:#131316;border:0;border-radius:999px;padding:7px 15px;font-weight:700}
+.pick{display:none;margin-top:14px;background:var(--sign);color:#fff;border-radius:12px;padding:16px 18px}
+.pick.show{display:block}
+.pick small{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--yellow)}
+.pick h3{font-size:30px;line-height:1.05;margin:6px 0;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.pick p{margin:0 0 12px;color:#d6d6dc;max-width:36em}
+.pick button{background:#fff;color:#131316;border:0;border-radius:8px;padding:7px 13px;font-weight:700;margin-right:6px}
+.pick button.q{background:none;color:#fff;border:1px solid #6a6a72}
+
+/* a line */
+.ln{margin-top:34px}
+.ln > header{background:var(--sign);color:#fff;border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:12px;border-bottom:6px solid var(--c)}
+.ln > header .b{font-size:19px}
+.ln h2{font-size:clamp(19px,3.4vw,26px);line-height:1.1;flex:1}
+.ln .ct{font-size:13.5px;color:#b7b7c0;white-space:nowrap;font-variant-numeric:tabular-nums}
+.ln .intro{margin:10px 0 0 4px;max-width:38em;color:var(--soft)}
+.track{list-style:none;margin:8px 0 0;padding:0;position:relative}
+.track::before{content:"";position:absolute;left:20px;top:26px;bottom:26px;width:8px;border-radius:4px;background:var(--c)}
+.track.plain::before{display:none}
+.st{position:relative;display:grid;grid-template-columns:48px 1fr;gap:0 12px;padding:15px 0;border-bottom:1px solid var(--line)}
+.st:last-child{border-bottom:0}
+.ring{position:relative;z-index:1;width:36px;height:36px;margin:1px 0 0 6px;border-radius:50%;border:6px solid var(--c);background:var(--paper);padding:0;display:grid;place-items:center;color:var(--t,#fff);font-weight:700;font-size:16px}
+.st.done .ring{background:var(--c)}
+.st.hit{background:var(--card);box-shadow:0 0 0 3px var(--yellow);border-radius:8px}
+.ti{display:flex;flex-wrap:wrap;align-items:center;gap:5px 9px}
+.ti h3{font-size:22px;line-height:1.15}
+.st.done h3{text-decoration:line-through;text-decoration-thickness:2px;text-decoration-color:var(--c)}
+.emo{font-size:20px;line-height:1}
+.stars{color:#c48f00;font-size:14px;letter-spacing:1px;white-space:nowrap}
+.meta{font-size:13.5px;color:var(--soft);margin-top:2px;display:flex;flex-wrap:wrap;gap:2px 10px;align-items:center}
+.meta b{color:var(--ink)}
+.st p{margin:7px 0 0;max-width:40em}
+.how{font-size:14.5px;color:var(--soft)}
+.how span{display:block}
+.how em{font-style:normal;font-weight:700;font-size:11.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink);margin-right:6px}
+.memo{margin-top:8px;display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;font-family:var(--hand);font-size:25px;line-height:1.1;color:#d0261f}
+.memo input{flex:1 1 200px;min-width:0;background:none;border:0;border-bottom:2px dashed var(--line);font-family:var(--hand);font-size:25px;color:#d0261f;padding:0 2px}
+.memo input::placeholder{color:var(--soft)}
+.heart{background:none;border:0;padding:0 2px;font-size:24px;line-height:1;color:var(--soft)}
+.heart[aria-pressed="true"]{color:#d0261f}
+.empty{padding:50px 0;color:var(--soft);font-size:17px}
+.empty b{display:block;color:var(--ink);font-size:28px;letter-spacing:-.02em}
+
+/* pages */
+.ph{margin:28px 0 4px}
+.ph h2{font-size:clamp(30px,6vw,52px);letter-spacing:-.04em;line-height:1}
+.ph p{color:var(--soft);max-width:36em;margin:8px 0 0}
+.mapbox{background:var(--card);border:1px solid var(--line);border-radius:14px;margin-top:16px;padding:6px}
+.mapbox svg{display:block;width:100%;height:auto;max-height:78vh}
+.mapbox text{font-family:var(--sans);font-weight:700;fill:var(--ink)}
+.mapbox .cnt{font-weight:400;fill:var(--soft)}
+.mapbox text{paint-order:stroke;stroke:var(--card);stroke-width:3.5px;stroke-linejoin:round}
+.mapbox .num{stroke:none}
+.mapbox .stn{cursor:pointer}
+.mapbox .stn circle{fill:var(--card);stroke:var(--ink);stroke-width:3}
+.mapbox .stn.sel circle{fill:var(--yellow)}
+.band{margin-top:22px}
+.band > h3{font-size:13px;letter-spacing:.08em;text-transform:uppercase;border-bottom:2px solid var(--ink);padding-bottom:6px;display:flex;justify-content:space-between}
+.band > h3 span{color:var(--soft);font-weight:400;letter-spacing:0;text-transform:none}
+.regions{display:grid;gap:14px;margin-top:18px}
+.reg{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.reg h3{font-size:13px;letter-spacing:.08em;text-transform:uppercase;display:flex;justify-content:space-between;margin-bottom:10px}
+.reg h3 span{color:var(--soft);font-weight:400;letter-spacing:0;text-transform:none}
+.flags{display:flex;flex-wrap:wrap;gap:6px}
+.cty{border:2px solid var(--line);background:none;border-radius:999px;padding:5px 12px;font-size:15px}
+.cty b{font-weight:400;color:var(--soft);margin-left:4px}
+.cty.on{border-color:var(--ink);background:var(--ink);color:var(--paper)}
+.cty.on b{color:inherit;opacity:.7}
+.cty.sel{box-shadow:0 0 0 3px var(--yellow)}
+.entry{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;padding:16px 0;border-bottom:1px solid var(--line);align-items:baseline}
+.entry .when{font-size:13px;color:var(--soft);white-space:nowrap;font-variant-numeric:tabular-nums}
+.entry h3{font-size:21px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.entry .note{grid-column:2;font-family:var(--hand);font-size:27px;line-height:1.15;color:#d0261f}
+.entry .none{grid-column:2;color:var(--soft);font-size:14.5px}
+.big{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:18px}
+.big div{background:var(--sign);color:#fff;border-radius:12px;padding:14px 16px}
+.big b{display:block;font-size:44px;line-height:1;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+.big span{font-size:13px;color:#b7b7c0}
+.bars{display:grid;gap:8px;margin-top:14px}
+.barrow{display:grid;grid-template-columns:2em minmax(90px,13em) 1fr 3.2em;gap:10px;align-items:center;font-size:14.5px}
+.barrow .t{height:14px;border-radius:7px;background:var(--line);overflow:hidden}
+.barrow .t i{display:block;height:100%;background:var(--c);border-radius:7px}
+.barrow .n{text-align:right;color:var(--soft);font-variant-numeric:tabular-nums}
+@media (max-width:520px){.barrow{grid-template-columns:2em 1fr 3.2em}.barrow .t{grid-column:1 / -1;order:9}}
+.facts{margin:18px 0 0;padding:0;list-style:none;display:grid;gap:8px}
+.facts li{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px}
+footer{margin-top:60px;background:var(--sign);color:#c9c9d2;padding:28px 0 60px;font-size:14.5px}
+footer .cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:24px}
+footer h4{margin:0 0 8px;color:#fff;font-size:12.5px;letter-spacing:.1em;text-transform:uppercase}
+footer p{margin:0 0 8px}
+footer a,footer button{color:#fff;background:none;border:0;padding:0;text-decoration:underline;text-underline-offset:3px}
+#copyout{display:none;width:100%;height:150px;margin-top:8px;background:#fff;color:#131316;border:0;border-radius:8px;padding:8px;font-size:12px}
+
+/* ---- poster look ---- */
+:root{--red:#e0122a;--butter:#ffe45c;--paper:#ffffff;--card:#f4f4f6;--ink:#111114;--soft:#5d5d68;--line:#e3e3e8;--sign:#111114;--yellow:#ffe45c;
+  --display:"Bricolage Grotesque","Arial Black","Helvetica Neue",Arial,sans-serif;--sans:"Instrument Sans","Helvetica Neue",Helvetica,Arial,sans-serif}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--paper:#121215;--card:#1b1b20;--ink:#f4f4f6;--soft:#a5a5b0;--line:#2c2c33;--sign:#000}}
+:root[data-theme="dark"]{--paper:#121215;--card:#1b1b20;--ink:#f4f4f6;--soft:#a5a5b0;--line:#2c2c33;--sign:#000}
+h1,h2,h3{font-family:var(--display);font-weight:800}
+.b,.b.x{border-radius:50%;transform:none;font-family:var(--display);font-weight:800}
+.sign{background:var(--red);border-top:0;box-shadow:none;padding:26px 0 30px;overflow:hidden}
+.kick{font-weight:600;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--butter)}
+.sign h1{font-size:clamp(44px,12.6vw,124px);line-height:.8;letter-spacing:-.05em;text-transform:uppercase;margin-top:6px}
+.sign h1 b{display:block;font-size:2.05em;color:var(--butter);letter-spacing:-.07em;margin-top:.02em;font-weight:800}
+.sign .say{color:#fff;font-weight:500;margin-top:16px}
+.tally{color:var(--butter)}
+.stripes{display:none}
+.holes{display:grid;grid-template-columns:repeat(26,1fr);gap:4px;margin-top:20px;max-width:640px}
+@media (max-width:560px){.holes{grid-template-columns:repeat(17,1fr)}}
+.h{aspect-ratio:1;border-radius:50%;border:2px solid #fff;background:none;padding:0}
+.h.on{background:var(--butter);border-color:var(--butter)}
+.tabs{background:var(--paper);border-top:0;border-bottom:1px solid var(--line)}
+.tab{color:var(--soft);border-radius:999px;font-family:var(--sans);font-weight:600}
+.tab[aria-current="page"]{background:var(--ink);color:var(--paper)}
+.jump{display:flex;gap:6px;flex-wrap:wrap}
+.jump a{display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:var(--c);color:var(--t);font-family:var(--display);font-weight:800;font-size:14px;text-decoration:none}
+.seg{background:none}
+.go{background:var(--butter);font-family:var(--display);font-weight:800}
+.ln > header{background:var(--c);color:var(--t);border-bottom:0;border-radius:18px;padding:16px 20px 18px;display:grid;grid-template-columns:auto 1fr auto;gap:4px 16px;align-items:end}
+.ln > header .no{font-family:var(--display);font-weight:800;font-size:64px;line-height:.8;letter-spacing:-.05em;opacity:.9}
+.ln h2{font-size:clamp(24px,4.6vw,38px);line-height:.98;letter-spacing:-.03em;text-wrap:balance}
+.ln .ct{color:inherit;font-weight:600;font-size:14px}
+.ln > header p{grid-column:2 / -1;margin:6px 0 0;max-width:36em;font-weight:500}
+@media (max-width:520px){.ln > header{grid-template-columns:1fr auto}.ln > header .no{display:none}.ln > header p{grid-column:1 / -1}}
+.track::before{display:none}
+.st{padding:16px 4px}
+.ring{width:38px;height:38px;border-width:5px;margin:2px 0 0 0;background:none;font-size:18px}
+.ti h3{font-size:23px;letter-spacing:-.02em}
+.stars{color:var(--red)}
+.st.hit{box-shadow:0 0 0 3px var(--butter)}
+.memo,.memo input,.entry .note{color:var(--red)}
+.heart[aria-pressed="true"]{color:var(--red)}
+.ph h2{font-size:clamp(34px,7vw,64px);letter-spacing:-.045em;line-height:.95}
+.mapbox{background:var(--paper)}
+.mapbox text{stroke:var(--paper)}
+.mapbox .stn circle{fill:var(--paper)}
+.mapbox .stn.sel circle{fill:var(--butter)}
+.cty.sel{box-shadow:0 0 0 3px var(--butter)}
+.big b{font-family:var(--display);font-weight:800}
+footer{background:#111114}
+footer h4{color:var(--butter)}
+</style>
+</head>
+<body>
+<header class="sign"><div class="wrap">
+  <div class="kick">Below 25th Street · and a few worth the train</div>
+  <h1>Downtown <b>101</b></h1>
+  <p class="say">The 101 places we are eating our way through. No tasting menus, nothing you book a month out. Fill in a ring every time we go.</p>
+  <div class="tally" id="tally"></div>
+  <div class="holes" id="holes" aria-label="One dot per place"></div>
+</div><nav class="stripes" id="stripes" aria-label="Lines"></nav></header>
+<div class="tabs"><div class="wrap" id="tabs"></div></div>
+
+<main class="wrap" id="main"></main>
+
+<footer><div class="wrap"><div class="cols">
+  <div><h4>Reading it</h4><p>★★★ cross town for it. ★★ go when the mood fits. ★ good to know.</p><p>$ is under 25 dollars each, $$ up to 60, $$$ up to 120, $$$$ a splurge. Distances are from SoHo and rough.</p></div>
+  <div><h4>Getting a table</h4><p>Arrive within fifteen minutes of opening, or after 9:15, and ask for the bar. Carry cash.</p><p id="bench"></p></div>
+  <div><h4>Ours</h4><p>Stations and notes are kept in this browser only.</p><p><button type="button" id="copy">Copy our list as text</button></p><textarea id="copyout" readonly aria-label="Our list as text"></textarea><p>All open as of November 27, 2026; check hours before a long trip.</p></div>
+</div></div></footer>
+<script>
+const SECS=["East Asian","Southeast Asian and Indian","Mediterranean, Middle Eastern and seafood","The rest of the map","Tacos and Latin","Everyday counters","Bistros and downtown rooms","Italian and pizza","Old New York and taverns","Far away but worth it"];
+const SHORT=["East Asian","SE Asian · Indian","Med · seafood","Rest of the map","Latin","Everyday","Bistros","Italian · pizza","Old New York","Far away"];
+const HOODS={up:"Uptown and Harlem",mid:"Midtown and Koreatown",qn:"Queens",wv:"West Village",flat:"Flatiron, Gramercy, Chelsea",ev:"East Village",gv:"Greenwich Village",noho:"NoHo",les:"LES",soho:"SoHo and Hudson Square",nol:"Nolita",ct:"Chinatown and Two Bridges",tri:"Tribeca and FiDi",si:"Staten Island",bk:"Brooklyn"};
+// name, section, hood, price, stars, origin, tags, why, order, move
+const P=[
+["Great NY Noodletown",0,"ct",1,3,"China","LQWC","The chef's-night-off Cantonese canteen. Shared tables, roast meats in the window, food in minutes.","Ginger-scallion lo mein, roast duck over rice, wonton noodle soup","Walk in and share a table. Bring cash."],
+["Raku",0,"soho",2,3,"Japan","LW","The city's benchmark udon: thick, springy noodles and clear, deep broth in a calm room.","Niku udon, cold udon with tempura","Go at opening; it fills by 4:30 pm on weekends."],
+["Shu Jiao Fu Zhou",0,"ct",1,3,"China","QWC","The best cheap meal downtown. Dumplings and noodles for a few dollars, made in front of you.","Peanut butter noodles, pork and chive dumplings","Cash only. Closes 8 pm."],
+["Spicy Village",0,"ct",1,3,"China","QWC","A five-table Henan kitchen with a cult far bigger than the room.","Spicy big tray chicken with hand-pulled noodles","Cash only, closed Sunday. Go mid-afternoon."],
+["Jeju Noodle Bar",0,"wv",3,3,"Korea","HNX","Ramyun taken seriously, with a Michelin star and no tasting menu. Rich; plan for it.","Toro ssam bap, gochu ramyun","Set an alert. The counter is your best odds."],
+["Sushi Katsuei",0,"wv",3,2,"Japan","LN","Serious counter omakase at several prices, without the ceremony or the wait.","An omakase set at the counter","Opens 2 pm. Closed Sunday."],
+["Kisa",0,"les",2,2,"Korea","LX","A Korean taxi-driver diner rebuilt down to the wallpaper. One tray, a dozen small dishes.","Spicy pork or stir-fried squid, with the banchan tray","Book, or go for lunch Wednesday to Sunday."],
+["Cocoron",0,"les",2,2,"Japan","LWCV","A soba specialist with a hand-drawn menu. The lightest bowl on the list.","Mera mera dip soba","Walk in. Cash only."],
+["Uncle Lou",0,"ct",2,2,"China","W","Homestyle Cantonese cooked for Chinatown's old-timers. The group dinner.","Crispy garlic chicken, steamed fish","Order light; portions are big. Closed Tuesday."],
+["Ivan Ramen",0,"les",2,2,"Japan","W","Ivan Orkin won over Tokyo, then came home. The inventive bowl, not the purist's.","Chicken paitan or a mazemen","Noon to 9 pm. Bar seats suit one."],
+["Nami Nori",0,"wv",2,2,"Japan","LW","Hand rolls made one at a time and passed over the counter. Fast, fun, fair.","The signature temaki set","Walk in at 5:30 pm on a weeknight."],
+["Lei",0,"ct",3,2,"China","LNX","A candlelit Chinese wine bar on the crooked street. Raw fish, chilled greens, good bottles.","Scallop crudo, chilled celtuce, short rib","Opens 5 pm. Go early for a seat."],
+["Thai Diner",1,"nol",2,3,"Thailand","BWX","A Thai-American diner that is good from breakfast to midnight. Always full for a reason.","Babka French toast, crab fried rice, khao soi","Weekday breakfast has no wait."],
+["Semma",1,"wv",3,3,"India","HN","Tamil Nadu home cooking with a Michelin star. Nothing here tastes like the Indian menu you know.","Gunpowder dosa, goat biryani","Dinner only. Set alerts and take any time."],
+["Mắm",1,"ct",2,3,"Vietnam","LW","Hanoi street food on low plastic stools. You build each bite from herbs, tofu and noodles.","Bún đậu mắm tôm platter; pho when it is on","Short hours. Be there at opening."],
+["Bánh Mì Saigon",1,"ct",1,3,"Vietnam","QW","The benchmark banh mi counter, once run from the back of a jewelry shop.","No. 1 BBQ pork banh mi","Takeout. Closed Monday, shuts 5:30 pm."],
+["Fish Cheeks",1,"noho",3,2,"Thailand","N","Seafood-first Thai from two Bangkok-born brothers. Bright, sour, spicy.","Coconut crab curry, steamed fish with lime","Lunch from noon is easy. Bring three friends."],
+["Kopitiam",1,"les",1,2,"Malaysia","QBWX","An all-day Malaysian coffee house built on one family's Penang recipes.","Nasi lemak, kaya butter toast","Order at the counter, 10 am to 10 pm."],
+["Dhamaka",1,"les",3,2,"India","NX","Regional Indian dishes you rarely see in a restaurant, with real heat.","Champaran meat, paplet fry","Easy to book. Bring a group and share."],
+["Punjabi Deli",1,"ev",1,2,"India","QVW","The cab drivers' vegetarian steam table. A full meal for the price of a coffee.","Samosa chaat, vegetables over rice, chai","8 am to 10 pm. Takeout."],
+["Cafe Himalaya",1,"ev",1,2,"Tibet","LVW","Cozy Tibetan home cooking at student prices, unchanged for years.","Momos, thenthuk noodle soup","Noon to 10 pm. Closed Monday."],
+["Kiki's",2,"ct",2,3,"Greece","LW","A Greek taverna hiding behind a Chinese-character sign. Carafes of wine, grilled fish.","Grilled octopus, saganaki, lamb chops","No bookings for small groups. Go at 5 pm."],
+["Shukette",2,"flat",3,3,"The Levant","N","A charcoal grill, a bread oven and a dozen dips. The loudest, happiest room here.","Frena bread, labneh, fish in a cage","Book, or line up before 5 pm for the counter."],
+["Cafe Mogador",2,"ev",2,3,"Morocco","LBW","A family-run Moroccan cafe since 1983, as good at 10 am as at 10 pm.","Moroccan eggs, chicken tagine","Weekdays walk in. Weekend brunch at 9:30 am."],
+["Mamoun's Falafel",2,"gv",1,3,"Syria","QVW","The 1971 original. A closet-sized counter that has fed the Village for pocket change.","Falafel sandwich with the hot sauce","Open past 2 am. Eat it in the park."],
+["Mary's Fish Camp",2,"wv",3,3,"United States","LW","The Village's lobster shack, back in a new room that feels like the old one.","Lobster roll, oysters","Opens 11 am. Lunch is a walk-in."],
+["Cervo's",2,"les",3,3,"Spain","LNW","A Spanish and Portuguese seafood bar. Marble counter, cold vermouth, shellfish and lemon.","Crispy shrimp heads, clams, piri piri chicken","From 5:30 pm. Walk in at the bar."],
+["12 Chairs Cafe",2,"soho",2,2,"Israel","LBV","An Israeli cafe open 8 am to 11 pm. The one you can eat at three times a week.","Mushroom hummus, malawach, shakshuka","Book dinner, or find the four back stools."],
+["Ayat",2,"ev",2,2,"Palestine","V","Palestinian home cooking in sharing portions, in a room hung with Palestinian art.","Mansaf, the mezze platter","Phone ahead for a table at night."],
+["Au Za'atar",2,"ev",2,2,"Lebanon","VW","Lebanese mezze for a group, and a shawarma tower carved at the table.","Hummus with mushrooms, muhammara, mixed grill","11 am to 11 pm. Walk in."],
+["Penny",2,"ev",4,2,"United States","LNX","An all-counter raw bar where you watch every plate being made.","Sesame brioche, tuna carpaccio","Counter seats only. Book or come at 5 pm."],
+["Kabawa and Bar Kabawa",3,"ev",4,3,"The Caribbean","NXH","Pan-Caribbean cooking that topped the Times's list for 2026. The bar next door is the easy way in.","Prix fixe in the dining room; patties at the bar","Tuesday to Saturday. Walk into the bar at 5:30 pm."],
+["Casa Mono",3,"flat",3,3,"Spain","N","A tiny tapas counter that has stayed sharp since 2003. Sit facing the plancha.","Razor clams, fideos with chorizo","Book two weeks out, or go for lunch."],
+["Veselka",3,"ev",2,3,"Ukraine","BWO","The Ukrainian diner since 1954 and the neighborhood's living room.","Varenyky, borscht","Open to midnight; all night Saturday."],
+["Sevilla",3,"wv",2,2,"Spain","WO","Old-world Spanish since 1941. Dented paella pans, waiters in vests.","Paella with lobster, garlic shrimp, sangria","Wednesday to Sunday from 1 pm. Walk in."],
+["Laliko",3,"wv",3,2,"Georgia","","Georgian cheese bread, walnut sauces and a cook who makes only dumplings.","Khinkali, adjaruli khachapuri","Lunch from noon is easy."],
+["Naks",3,"ev",2,2,"The Philippines","X","Filipino home cooking. Better as the casual place it became than the tasting menu it began as.","Fried chicken, kare-kare","Reserve. Closed Monday."],
+["Kafana",3,"ev",3,2,"Serbia","N","A candlelit Serbian tavern on Avenue C. Grilled meats, phyllo pies, plum brandy.","Ajvar, spinach pie, mixed grill","From 5 pm. Bring a group."],
+["Awash",3,"ev",2,2,"Ethiopia","VL","Shared platters eaten by hand with injera. One of the best vegetarian meals here.","A sampler for the table, shiro wat","Dinner from 4:30 pm."],
+["Los Tacos No. 1",4,"tri",1,3,"Mexico","QW","The consensus best taqueria in Manhattan. Standing room, tortillas pressed to order.","Adobada and carne asada tacos, con todo","Pay, hand over the ticket, eat standing."],
+["Carnitas Ramirez",4,"ev",1,3,"Mexico","QW","Whole-hog carnitas by the cut. As close as the city gets to a Mexico City stand.","Surtida taco, crispy belly","Wednesday to Sunday from noon."],
+["Casa Adela",4,"ev",1,3,"Puerto Rico","W","Puerto Rican home cooking in Loisaida since 1976. The rotisserie chicken is legend.","Rotisserie chicken, mofongo","11 am to 9 pm. Lunch is easiest."],
+["Corima",4,"ct",3,2,"Mexico","NX","Northern Mexican cooking with ambition and a Michelin star.","Sourdough flour tortilla, a crudo","Sit at the bar and order à la carte."],
+["Café Habana",4,"nol",2,2,"Cuba","W","A Cuban-Mexican corner diner, elbow to elbow since 1998.","Grilled corn, Cuban sandwich","Walk in. Happy hour 4 to 7 pm."],
+["El Castillo de Jagua",4,"les",1,2,"Dominican Republic","QBW","The Dominican lunch counter that has fed Rivington Street for forty years.","Roast chicken, rice and beans, mofongo","8 am to 9 pm. Walk in."],
+["Don Ceviche",4,"ev",2,1,"Peru","LW","A small traditional Peruvian room that Peruvian diners vouch for. The least proven pick.","Ceviche mixto, lomo saltado","Walk in from 11 am."],
+["Superiority Burger",5,"ev",2,3,"New York","VXW","A vegetarian diner loved by people who do not care that it is vegetarian.","The burger, burnt broccoli salad, gelato","Walk in from 5 pm."],
+["Faicco's",5,"wv",1,3,"Italian America","QO","A pork store on Bleecker since 1900. One hero feeds two.","Italian Special hero","Takeout. Closed Monday."],
+["Tompkins Square Bagels",5,"ev",1,3,"New York","QB","The downtown bagel. Hand-rolled, soft inside, with a proper shell.","Egg and cheese on everything","Know your order before the front of the line."],
+["Caffè Panna",5,"flat",1,3,"Italy","Q","Dense ice cream topped with whipped cream from Italy. The line is deserved.","Affogato sundae","Opens 1:30 pm. Closed Monday."],
+["Dimes",5,"ct",2,2,"United States","LBVW","The bright cafe that made vegetables a downtown habit and named a micro-neighborhood.","Warm Up salad, breakfast plates","Walk in, 9 am to 10 pm."],
+["Librae Bakery",5,"noho",1,2,"The Levant","QB","A Middle Eastern-leaning bakery with the city's most argued-for croissant.","Pistachio croissant","Opens 7:30 am."],
+["Abraço",5,"ev",1,2,"New York","QB","The neighborhood espresso bar. People drink it on the sidewalk on purpose.","Cortado, olive oil cake","Opens 8 am."],
+["Springbone Kitchen",5,"gv",1,1,"New York","LQ","Bone broth and clean bowls. Not a destination; the healthy default.","A broth and a chicken-and-rice bowl","Counter, 10:30 am to 8:30 pm."],
+["Raoul's",6,"soho",3,3,"France","N","The downtown bistro since 1975. Dark, loud, and the template for half this list.","Steak au poivre; the bar-only burger","Be at the bar when it opens at 5 pm."],
+["Balthazar",6,"soho",3,3,"France","BN","The highest-energy room downtown from breakfast to midnight, since 1997.","Steak frites, onion soup","Weekday breakfast is a walk-in."],
+["Minetta Tavern",6,"gv",3,3,"France","NO","A 1937 tavern reborn as a Parisian steakhouse. Home of the luxury burger.","Black Label burger, pommes Anna","Bar at 5 pm, or lunch Wednesday to Sunday."],
+["Gramercy Tavern",6,"flat",3,3,"United States","NW","The standard for American hospitality. The front Tavern room is the most gracious walk-in in town.","The Tavern burger, whatever is in season","Skip the dining room; walk into the Tavern."],
+["Estela",6,"nol",3,3,"New York","LN","Bright, sharp small plates that a decade of restaurants have copied.","Endive salad, ricotta dumplings","Bar walk-ins wait about 45 minutes."],
+["4 Charles Prime Rib",6,"wv",4,3,"United States","HN","A clubby prime rib room with a dozen tables. The hardest table and the richest meal.","Prime rib, the burger","Queue by 10:20 am on weekends for the walk-in list."],
+["Buvette",6,"wv",2,2,"France","BW","A tiny all-day French bar, since copied in Paris. Best alone or as a pair.","Steamed eggs, croque madame","Before 9 am or after 9:30 pm."],
+["Blue Ribbon Brasserie",6,"soho",3,2,"New York","NW","Open until 2 am. Where the city's cooks eat after service.","Fried chicken, oysters","Walk in after 11 pm."],
+["Via Carota",7,"wv",3,3,"Italy","LNWV","Vegetables as the main event, and the most famous green salad in the city.","Insalata verde, cacio e pepe","Put your name down at 11 am or 3 pm."],
+["I Sodi",7,"wv",3,3,"Italy","HN","Spare, exact Tuscan cooking. For many locals the best Italian in the city.","Lasagna, a negroni","Weekend lunch takes early walk-ins."],
+["John's of Bleecker Street",7,"wv",2,3,"New York","WO","Coal oven since 1929. Carved wooden booths, whole pies only.","Pepperoni with fresh garlic","No slices, no bookings. Weekday afternoon."],
+["L'industrie",7,"wv",1,3,"New York","Q","The modern slice that reset expectations. Even the old-timers concede it.","Burrata slice","Order online for pickup to skip the line."],
+["Una Pizza Napoletana",7,"les",3,3,"Italy","H","One man makes every dough and closes if he cannot be there. The purist's pizza.","Margherita","Thursday to Saturday only. Book."],
+["Il Buco",7,"noho",3,2,"Italy","N","An antiques shop that became a candlelit farmhouse table. The most romantic room here.","Bread and olive oil, a pasta","Lunch and the bar are the easy ways in."],
+["Prince Street Pizza",7,"nol",1,2,"New York","QW","The pepperoni square with cupped, crisped edges. Greasy and proud of it. One is plenty.","Spicy Spring square","Go late; the lunch line is long."],
+["Katz's Delicatessen",8,"les",2,3,"Jewish New York","OW","Since 1888. Hand-carved pastrami under fluorescent lights. No other deli comes close.","Pastrami on rye, a pickle","Use the cutter line. Keep your ticket."],
+["Russ & Daughters Cafe",8,"les",2,3,"Jewish New York","BL","Four generations of smoked fish, served sitting down.","The Classic board, latkes","Before 10 am you walk in. Closes mid-afternoon."],
+["B&H Dairy",8,"ev",1,3,"Jewish New York","QBCOV","A 1938 kosher dairy counter barely wider than its stools.","Matzo ball soup with buttered challah","Cash. Closed Monday."],
+["Golden Diner",8,"ct",2,3,"New York","BX","An Asian-American diner under the Manhattan Bridge. The pancakes have their own fans.","Honey butter pancakes, egg and cheese sando","Weekdays, or queue before the 9 am opening."],
+["McSorley's Old Ale House",8,"ev",1,3,"Ireland","COW","Pouring since 1854. Two beers on the menu, sawdust on the floor.","Light and dark ale, cheese and onion plate","Cash. Go on a weekday afternoon."],
+["Ear Inn",8,"soho",2,3,"New York","OW","A bar since 1817 in a house from 1770. Crayons on the tables, no pretense.","A pint and the burger","Late afternoon. Room first, food second."],
+["The Dead Rabbit",8,"tri",2,3,"Ireland","W","The city's best Irish pub. A proper pint downstairs, cocktails up.","Guinness, fish and chips, Irish coffee","Walk into the taproom, 11 am to 2 am."],
+["S&P Lunch",8,"flat",2,2,"Jewish New York","BQO","A 1929 luncheonette counter, lovingly revived. The city's sandwich canon.","Tuna melt, egg cream","8 am to 8 pm. Take the counter."],
+["Hamburger America",8,"soho",1,2,"United States","QW","A burger historian's luncheonette. Thin, smashed, regional, cheap.","Fried onion burger","Sit at the counter facing the griddle."],
+["Delmonico's",8,"tri",4,2,"New York","NO","Founded 1837, the country's first fine-dining room. You pay for the history and get it.","Delmonico steak, baked Alaska","Lunch at the bar gets you the room."],
+["Lord's",8,"gv",3,2,"England","N","A handsome English bistro. Meat pies and puddings done with conviction.","Welsh rarebit burger, Scotch egg","Book a few days out."],
+["Keens",9,"mid",4,3,"New York","NO","An 1885 chophouse under a ceiling of clay pipes. The steakhouse locals pick.","The mutton chop","Book weeks out, or eat in the pub room."],
+["Lucali",9,"bk",2,3,"New York","CH","Candlelit, three things on the menu, and the pizza chefs name first.","A pie with garlic and basil, the calzone","Line up by 3 pm. Cash, bring your own wine."],
+["Barney Greengrass",9,"up",2,3,"Jewish New York","BCO","The Sturgeon King since 1908, with the wallpaper to match.","Sturgeon and nova with eggs and onions","Cash. Closed Monday."],
+["Charles Pan-Fried Chicken",9,"up",1,3,"The American South","Q","Fried in cast-iron skillets for decades. The city's standard.","Dark-meat fried chicken, collards","Counter at 145th Street."],
+["Grand Central Oyster Bar",9,"mid",2,3,"New York","OWL","Since 1913 under vaulted tile inside the terminal.","A dozen oysters and a pan roast","Weekdays only. Sit at the counter."],
+["Hometown Bar-B-Que",9,"bk",2,3,"The American South","W","The city's best barbecue, in a warehouse by the Red Hook waterfront.","Brisket, cornbread","Closed Monday. Arrive early."],
+["Kabab Cafe",9,"qn",3,3,"Egypt","","One cook, a dozen seats, no menu. Closer to dinner at a friend's house.","Whatever Ali suggests","Closed Monday. Give it the evening."],
+["Sakagura",9,"mid",3,3,"Japan","N","A sake bar hidden in an office basement since 1996.","Buta kakuni, a sake flight","Reserve dinner. Weekday lunch is easy."],
+["Yemen Café",9,"bk",2,3,"Yemen","W","Lamb that falls off the bone, with broth and hot bread on the house.","Lamb haneeth, chicken fahsa","10 am to 11 pm. Walk in."],
+["Peter Luger",9,"bk",4,2,"New York","OCN","The 1887 steakhouse everyone argues about and everyone goes to once.","Porterhouse; the burger at lunch","Book. Cash or debit only."],
+["Win Son",9,"bk",2,2,"Taiwan","X","Taiwanese-American cooking by two friends raised here. New-school New York in one room.","Lu rou fan, beef roll","Dinner from 5:30 pm."],
+["Sofreh",9,"bk",3,2,"Iran","LNV","Modern Persian from a chef who opened her first restaurant at 59.","Eggplant dip, date salad, saffron ice cream","Dinner only. Closed Monday. Book."],
+["Bamonte's",9,"bk",3,2,"Italian America","ON","Red sauce since 1900, served by waiters in tuxedos.","Clams oreganata, pork chops","Wednesday to Sunday. Dress properly."],
+["Nan Xiang Soup Dumplings",9,"qn",2,2,"China","W","The soup dumpling standard, in the city's biggest Chinatown.","Pork soup dumplings","8 am to midnight."],
+["Cho Dang Gol",9,"mid",2,2,"Korea","L","House-made tofu and stews. The Korean meal that is light, not grilled.","Seafood tofu stew","Weekday lunch has the shortest wait."],
+["Café Sabarsky",9,"up",2,2,"Austria","B","A Viennese coffeehouse with a grand piano and a Klimt upstairs.","Schnitzel, Sachertorte","Opens 9 am. Closed Tuesday."],
+["Casa Enrique",9,"qn",2,2,"Mexico","N","Traditional regional Mexican, one subway stop from Midtown.","Mole enchiladas, aguachile","Book. Dinner from 5 pm."],
+["A&A Bake Doubles and Roti",9,"bk",1,2,"Trinidad","QB","Trinidadian street food from a takeout counter. A full meal for a few dollars.","Doubles, goat roti","From 7 am. Closed Sunday."],
+["Arepa Lady",9,"qn",2,2,"Colombia","W","It began as a late-night cart under the 7 train. Now the family's own room.","Arepa de choclo","Opens noon."],
+["Heidelberg",9,"up",3,2,"Germany","O","The last of old German Yorkville, since 1936. Heavy and happy.","Schnitzel, sausages, a boot of beer","Go as a group."],
+["Lakruwana",9,"si",2,2,"Sri Lanka","CV","A dining room as ornate as a temple, a free ferry ride away.","The weekend buffet","Cash. Closed Monday."]
+];
+const BENCH=[["Karczma","Far away","A long ride for the one cuisine nobody asked for"],["Mountain House","East Asian","The only Sichuan pick; cut for richness"],["Omen Azen","East Asian","A second SoHo udon room after Raku"],["Nom Wah Tea Parlor","East Asian","You go for the 1920 room more than the dim sum"],["Phở Gà Vàng","Southeast Asian","The least proven pick; Mắm covers pho"],["Shuka","Mediterranean","Overlaps Shukette and 12 Chairs"],["Smithereens","Seafood","The second new-school seafood counter after Penny"],["Lure Fishbar","Seafood","Recent reviews are mixed"],["Veniero's","Everyday counters","A dessert stop more than a destination"],["A Salt & Battery","Old New York","The Dead Rabbit serves fish and chips"],["Taverna Kyclades","Far away","Kiki's covers Greek without the trip"],["Dominick's","Far away","Bamonte's covers old-school red sauce"],["Pikine","Far away","Hours could not be confirmed; first back once checked"]];
+
+const INTRO=[
+"Chinatown is a ten-minute walk, so this one runs deep. Soup, soba and sushi when you want to feel good after. The rich ones say so.",
+"Bright, sour, herbal, hot. The one to eat from most often.",
+"Grilled fish, a table of dips, something cold to drink. The easiest way to eat well and still want to walk home.",
+"One of each. Spanish twice, because the two could not be more different.",
+"Mostly counters. Bring cash and do not overthink it.",
+"The places you end up at three times a week. One bagel, one sandwich, one coffee, one bowl of something green.",
+"Dark rooms, loud tables, steak frites. Go to the bar.",
+"Two trattorias, three pizzas and one very good excuse for candlelight.",
+"The ones that were here before you and will be here after. You go for the room as much as the plate.",
+"Past 25th Street and over the bridges. Each one is worth planning half a day around."
+];
+
+
+const MEAL=["LD", "LD", "L", "LD", "D", "D", "LD", "LD", "LD", "LD", "D", "DK", "BLD", "D", "LD", "L", "LD", "BLDS", "D", "BLD", "LD", "LDK", "D", "BLD", "LDN", "LD", "DK", "BLD", "LD", "LD", "DK", "DK", "LDK", "BLDN", "LD", "LD", "D", "DK", "D", "LD", "LD", "LD", "DK", "LDK", "BLD", "LD", "D", "L", "BL", "S", "BLD", "BS", "BS", "LD", "DK", "BLDK", "LDK", "LDK", "DK", "D", "BLDK", "DKN", "LDK", "DK", "LD", "LD", "D", "LDK", "LDN", "LDN", "BL", "BL", "BLD", "KL", "KLDN", "KLDN", "BL", "LD", "LDK", "DKB", "LDK", "D", "BL", "LD", "LDK", "LD", "D", "LDK", "LD", "LD", "DB", "D", "D", "LD", "LD", "BLS", "D", "BL", "LD", "LDK", "LD"];
+
+
+const EMO="🍜 🍲 🥟 🌶️ 🍜 🍣 🍱 🥢 🍗 🍥 🍙 🍷 🍳 🍛 🌿 🥖 🦀 ☕ 🔥 🫖 🥟 🐙 🫓 🍋 🧆 🦞 🦐 🍆 🫒 🥙 🦪 🥥 🥓 🥣 🥘 🧀 🍗 🍖 🫓 🌮 🐷 🍗 🌵 🌽 🍚 🐟 🍔 🥪 🥯 🍨 🥗 🥐 ☕ 🥣 🥩 🍾 🍔 🍽️ 🥬 🥩 🥚 🦪 🥗 🍝 🍕 🍕 🍕 🫒 🍕 🥪 🐟 🥣 🥞 🍺 🍺 ☘️ 🥪 🍔 🥩 🥧 🍖 🍕 🐟 🍗 🦪 🍖 🍢 🍶 🫓 🥩 🍚 🍆 🍝 🥟 🍲 🍰 🫔 🫓 🌽 🍺 🍛".split(" ");
+
+const LET=["1","2","3","4","5","6","7","8","9","10"];
+const COL=["#ff3d8b","#ff7a1a","#00a6c8","#8b46ff","#f5b800","#35b24a","#1b3cff","#0f8a5f","#9a5b2c","#5c6470"];
+const TXT=["#fff","#111114","#fff","#fff","#111114","#111114","#fff","#fff","#fff","#fff"];
+const MEALS=[["B","Breakfast"],["L","Lunch"],["D","Dinner"],["K","Drinks"],["S","Sweet"],["","Any"]];
+const VIEWS=[["all","All"],["todo","To go"],["done","Done"],["fav","♥"]];
+const PAGES=[["list","The lines"],["map","Map"],["cuisines","Cuisines"],["journal","Our notes"],["stats","Stats"]];
+const XY={soho:[0,0],nol:[.5,.1],noho:[.5,.6],gv:[-.1,.7],wv:[-.7,.9],ev:[1.2,.7],les:[1.2,-.1],ct:[.7,-.6],tri:[-.3,-.9],flat:[.3,1.9],mid:[.3,3.5],up:[.5,7],bk:[2,-3],qn:[4,3],si:[-3,-9]};
+const POS={up:[150,34],mid:[150,100],qn:[322,112],flat:[172,168],wv:[58,232],gv:[122,268],noho:[204,226],ev:[290,236],soho:[110,326],nol:[192,334],les:[290,326],ct:[222,392],tri:[96,404],bk:[304,458],si:[50,486]};
+const LP={up:[1,0],mid:[1,0],qn:[-1,0],flat:[1,0],wv:[0,-1],gv:[0,1],noho:[0,-1],ev:[1,0],soho:[0,1],nol:[0,1],les:[1,0],ct:[1,0],tri:[0,1],bk:[-1,0],si:[1,0]};
+const LAB={up:"Uptown",mid:"Midtown",qn:"Queens",flat:"Flatiron",wv:"West Village",gv:"Greenwich Village",noho:"NoHo",ev:"East Village",soho:"SoHo",nol:"Nolita",les:"LES",ct:"Chinatown",tri:"Tribeca · FiDi",bk:"Brooklyn",si:"Staten Island"};
+const REG={"East Asia":["China","Japan","Korea","Taiwan"],"Southeast Asia":["Thailand","Vietnam","Malaysia","The Philippines"],"South Asia":["India","Tibet","Sri Lanka"],"Middle East and Africa":["The Levant","Morocco","Syria","Israel","Palestine","Lebanon","Egypt","Yemen","Iran","Ethiopia"],"Europe":["Greece","Spain","France","Italy","Georgia","Ukraine","Serbia","England","Ireland","Austria","Germany"],"Latin America and the Caribbean":["Mexico","Cuba","Puerto Rico","Dominican Republic","Peru","Colombia","Trinidad","The Caribbean"],"New York and America":["New York","Jewish New York","Italian America","United States","The American South"]};
+const KEY="our-101-v1";
+let done={},fav=new Set(),meal="",view="all",page="list",selHood="soho",selCty="";
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const bullet=k=>'<span class="b" style="--c:'+COL[k]+';--t:'+TXT[k]+'"><i>'+LET[k]+'</i></span>';
+const N=P.length;
+function far(h){const b=XY[h],m=Math.hypot(b[0],b[1])*13;return h==="soho"?"around the corner":m<=12?"10-minute walk":m<=26?"20-minute walk":m<=60?"short subway":"a trip"}
+function load(seed){
+  if(seed&&seed.done){done=seed.done;fav=new Set(seed.fav||[]);return}
+  try{const v=JSON.parse(localStorage.getItem(KEY)||"null");if(v){
+    // stored by name so list changes never shift a tick
+    if(v.byName){Object.keys(v.byName).forEach(n=>{const i=P.findIndex(p=>p[0]===n);if(i>=0)done[i]=v.byName[n]});(v.favNames||[]).forEach(n=>{const i=P.findIndex(p=>p[0]===n);if(i>=0)fav.add(i)})}
+  }}catch(e){}
+}
+function store(){try{const byName={};Object.keys(done).forEach(i=>byName[P[i][0]]=done[i]);localStorage.setItem(KEY,JSON.stringify({byName,favNames:[...fav].map(i=>P[i][0])}))}catch(e){}}
+function nice(d){if(!d)return "";const x=new Date(d+"T12:00:00");return isNaN(x)?"":x.toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"})}
+function today(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+function station(p,i,kind){
+  const d=done[i],f=fav.has(i),k=p[1];
+  return '<li class="st'+(d?" done":"")+'" id="p'+i+'" style="--c:'+COL[k]+';--t:'+TXT[k]+'">'+
+  '<button class="ring" type="button" data-tick="'+i+'" aria-pressed="'+!!d+'" aria-label="'+(d?"Clear ":"Fill in ")+esc(p[0])+'">'+(d?"✓":"")+'</button><div>'+
+  '<div class="ti"><span class="emo" aria-hidden="true">'+EMO[i]+'</span><h3>'+esc(p[0])+'</h3><span class="stars" aria-label="'+p[4]+' stars">'+"★".repeat(p[4])+'</span></div>'+
+  '<div class="meta">'+(kind?bullet(k):"")+'<span>'+esc(HOODS[p[2]])+'</span><b>'+"$".repeat(p[3])+'</b><span>'+far(p[2])+'</span><span>'+esc(p[5])+'</span></div>'+
+  '<p>'+esc(p[7])+'</p><p class="how"><span><em>Order</em>'+esc(p[8])+'</span><span><em>Getting in</em>'+esc(p[9])+'</span></p>'+
+  (d?'<div class="memo"><span>'+(d.d?esc(nice(d.d)):"Done")+'</span><input type="text" data-note="'+i+'" value="'+esc(d.n||"")+'" placeholder="what we had, who was right" aria-label="Our note on '+esc(p[0])+'"><button class="heart" type="button" data-fav="'+i+'" aria-pressed="'+f+'" aria-label="Favorite">'+(f?"♥":"♡")+'</button></div>':"")+
+  '</div></li>';
+}
+const listOf=(ids,title)=>'<section class="band"><h3>'+esc(title)+'<span>'+ids.filter(i=>done[i]).length+" of "+ids.length+'</span></h3><ul class="track plain">'+ids.map(i=>station(P[i],i,true)).join("")+'</ul></section>';
+function shows(i){const d=!!done[i];return view==="all"||(view==="todo"&&!d)||(view==="done"&&d)||(view==="fav"&&fav.has(i))}
+function pgList(){
+  let h='<div class="ctl"><nav class="jump" aria-label="Jump to a course">'+SECS.map((s,k)=>'<a href="#list" data-line="'+k+'" style="--c:'+COL[k]+';--t:'+TXT[k]+'" title="'+esc(s)+'" aria-label="'+esc(s)+'">'+(k+1)+'</a>').join("")+'</nav><div class="seg" role="group" aria-label="Show">'+VIEWS.map(v=>'<button type="button" data-view="'+v[0]+'" aria-pressed="'+(view===v[0])+'">'+v[1]+'</button>').join("")+'</div>'+
+    '<div class="meals" role="group" aria-label="Pick for which meal">'+MEALS.map(m=>'<button type="button" class="meal" data-meal="'+m[0]+'" aria-pressed="'+(meal===m[0])+'">'+m[1]+'</button>').join("")+'<button class="go" type="button" data-pick="1">Pick for us</button></div></div><div class="pick" id="pick" aria-live="polite"></div>';
+  let any=false;
+  SECS.forEach((s,k)=>{
+    const g=P.map((p,i)=>i).filter(i=>P[i][1]===k&&shows(i));if(!g.length)return;any=true;
+    const all=P.filter(p=>p[1]===k).length,dn=P.filter((p,i)=>p[1]===k&&done[i]).length;
+    h+='<section class="ln" id="line-'+LET[k]+'" style="--c:'+COL[k]+';--t:'+TXT[k]+'"><header><span class="no">'+String(k+1).padStart(2,"0")+'</span><h2>'+esc(s)+'</h2><span class="ct">'+dn+" of "+all+'</span><p>'+esc(INTRO[k])+'</p></header><ul class="track">'+g.map(i=>station(P[i],i,false)).join("")+'</ul></section>';
+  });
+  if(!any)h+='<div class="empty"><b>'+(view==="done"?"No stations filled in yet.":view==="fav"?"No favorites yet.":"That is all of them.")+'</b>'+(view==="done"?"Dinner tonight?":view==="fav"?"Fill in a station, then give it a heart.":"")+'</div>';
+  return h;
+}
+function pgMap(){
+  let svg='<svg viewBox="0 0 380 520" role="img" aria-label="Schematic map of the ten lines through fifteen neighborhoods">';
+  SECS.forEach((s,k)=>{
+    const hs=Object.keys(POS).filter(h=>P.some(p=>p[1]===k&&p[2]===h)).sort((a,b)=>POS[a][1]-POS[b][1]||POS[a][0]-POS[b][0]);
+    if(hs.length<2)return;const o=(k-4.5)*2.6;
+    svg+='<polyline fill="none" stroke="'+COL[k]+'" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round" points="'+hs.map(h=>(POS[h][0]+o)+","+(POS[h][1]+o*.35)).join(" ")+'"/>';
+  });
+  Object.keys(POS).forEach(h=>{
+    const ids=P.map((p,i)=>i).filter(i=>P[i][2]===h),dn=ids.filter(i=>done[i]).length,x=POS[h][0],y=POS[h][1],r=9+Math.min(ids.length,20)*.45,d=LP[h];
+    const tx=x+d[0]*(r+7),ty=d[1]?y+d[1]*(r+13)-(d[1]<0?9:0):y-1,an=d[0]>0?"start":d[0]<0?"end":"middle";
+    svg+='<g class="stn'+(selHood===h?" sel":"")+'" data-hood="'+h+'" tabindex="0" role="button" aria-label="'+esc(HOODS[h])+", "+dn+" of "+ids.length+'"><circle cx="'+x+'" cy="'+y+'" r="'+r+'"/>'+
+      '<text class="num" x="'+x+'" y="'+(y+3.5)+'" text-anchor="middle" font-size="9">'+ids.length+'</text>'+
+      '<text x="'+tx+'" y="'+ty+'" text-anchor="'+an+'" font-size="11">'+esc(LAB[h])+'</text>'+
+      '<text class="cnt" x="'+tx+'" y="'+(ty+11)+'" text-anchor="'+an+'" font-size="9">'+dn+" of "+ids.length+' done</text></g>';
+  });
+  svg+='</svg>';
+  const ids=P.map((p,i)=>i).filter(i=>P[i][2]===selHood).sort((a,b)=>P[b][4]-P[a][4]);
+  return '<div class="ph"><h2>The map</h2><p>Fifteen neighborhoods, ten colors. Not to scale; north is up. Tap a neighborhood to see who lives there.</p></div><div class="mapbox">'+svg+'</div>'+listOf(ids,HOODS[selHood]);
+}
+function pgCuisines(){
+  const tried=new Set(Object.keys(done).map(i=>P[i][5]));
+  let h='<div class="ph"><h2>Where the cooking comes from</h2><p>'+tried.size+' of '+new Set(P.map(p=>p[5])).size+' tried so far. A place fills in once we have eaten there. Tap one to see who cooks it.</p></div><div class="regions">';
+  Object.keys(REG).forEach(r=>{
+    const cs=REG[r].filter(c=>P.some(p=>p[5]===c));
+    h+='<div class="reg"><h3>'+esc(r)+'<span>'+cs.filter(c=>tried.has(c)).length+" of "+cs.length+'</span></h3><div class="flags">'+cs.map(c=>'<button type="button" class="cty'+(tried.has(c)?" on":"")+(selCty===c?" sel":"")+'" data-cty="'+esc(c)+'">'+esc(c)+'<b>'+P.filter(p=>p[5]===c).length+'</b></button>').join("")+'</div></div>';
+  });
+  h+='</div>';
+  if(selCty)h+=listOf(P.map((p,i)=>i).filter(i=>P[i][5]===selCty),selCty);
+  return h;
+}
+function pgJournal(){
+  const ids=Object.keys(done).map(Number).sort((a,b)=>(done[b].d||"").localeCompare(done[a].d||"")||a-b);
+  let h='<div class="ph"><h2>Our notes</h2><p>Everything we have eaten, newest first, with what we wrote down at the time.</p></div>';
+  if(!ids.length)return h+'<div class="empty"><b>Nothing yet.</b>Fill in a station on the lines and write one line about it. It shows up here.</div>';
+  return h+ids.map(i=>'<div class="entry"><span class="when">'+(done[i].d?esc(nice(done[i].d)):"")+'</span><h3>'+bullet(P[i][1])+'<span>'+EMO[i]+" "+esc(P[i][0])+'</span>'+(fav.has(i)?'<span style="color:#d0261f">♥</span>':"")+'</h3>'+(done[i].n?'<div class="note">'+esc(done[i].n)+'</div>':'<div class="none">No note. <button type="button" class="meal" data-go="'+i+'">Add one</button></div>')+'</div>').join("");
+}
+function pgStats(){
+  const ids=Object.keys(done).map(Number),n=ids.length;
+  const spend=ids.reduce((a,i)=>a+P[i][3],0),hood={};ids.forEach(i=>hood[P[i][2]]=(hood[P[i][2]]||0)+1);
+  const topHood=Object.keys(hood).sort((a,b)=>hood[b]-hood[a])[0];
+  const dates=ids.map(i=>done[i].d).filter(Boolean).sort();
+  let h='<div class="ph"><h2>Stats</h2><p>How the eating is going.</p></div><div class="big"><div><b>'+n+'</b><span>of '+N+' stations</span></div><div><b>'+new Set(ids.map(i=>P[i][5])).size+'</b><span>cuisines tried</span></div><div><b>'+new Set(ids.map(i=>P[i][2])).size+'</b><span>of 15 neighborhoods</span></div><div><b>'+fav.size+'</b><span>favorites</span></div></div><div class="bars">';
+  SECS.forEach((s,k)=>{const all=P.filter(p=>p[1]===k).length,dn=ids.filter(i=>P[i][1]===k).length;
+    h+='<div class="barrow" style="--c:'+COL[k]+'">'+bullet(k)+'<span>'+esc(SHORT[k])+'</span><span class="t"><i style="width:'+(dn/all*100)+'%"></i></span><span class="n">'+dn+"/"+all+'</span></div>'});
+  h+='</div><ul class="facts">';
+  if(!n)h+='<li>Nothing to count yet. The first station is the hardest.</li>';
+  else{
+    h+='<li>Average spend level: <b>'+"$".repeat(Math.round(spend/n))+'</b> a head.</li>';
+    h+='<li>Home turf: <b>'+esc(HOODS[topHood])+'</b>, with '+hood[topHood]+'.</li>';
+    h+='<li>Three-star stations done: <b>'+ids.filter(i=>P[i][4]===3).length+'</b> of '+P.filter(p=>p[4]===3).length+'.</li>';
+    h+='<li>Trips off the island or uptown: <b>'+ids.filter(i=>P[i][1]===9).length+'</b>.</li>';
+    if(dates.length)h+='<li>First station: <b>'+esc(nice(dates[0]))+'</b>. Latest: <b>'+esc(nice(dates[dates.length-1]))+'</b>.</li>';
+    const lines=SECS.filter((s,k)=>P.every((p,i)=>p[1]!==k||done[i]));if(lines.length)h+='<li>Lines finished: <b>'+lines.map(esc).join(", ")+'</b>.</li>';
+  }
+  return h+'</ul>';
+}
+function render(){
+  const n=Object.keys(done).length;
+  $("tally").textContent=n===0?"0 down, "+N+" to go":n===N?"All "+N+". We did it.":n+" down, "+(N-n)+" to go";
+  const hs=$("holes");hs.textContent="";P.forEach((p,i)=>{const b=document.createElement("button");b.type="button";b.className="h"+(done[i]?" on":"");b.title=p[0];b.setAttribute("aria-label",p[0]+(done[i]?", done":""));b.dataset.go=i;hs.append(b)});
+  $("stripes").innerHTML=SECS.map((s,k)=>{const all=P.filter(p=>p[1]===k).length,dn=P.filter((p,i)=>p[1]===k&&done[i]).length;return '<a href="#list" data-line="'+k+'" style="--n:'+all+';--c:'+COL[k]+';--t:'+TXT[k]+';--p:'+(dn/all*100)+'%" title="'+esc(s)+'" aria-label="'+esc(s)+", "+dn+" of "+all+'"><i>'+LET[k]+'</i></a>'}).join("");
+  $("tabs").innerHTML=PAGES.map(p=>'<a class="tab" href="#'+p[0]+'"'+(page===p[0]?' aria-current="page"':"")+'>'+p[1]+(p[0]==="journal"&&n?" · "+n:"")+'</a>').join("");
+  $("main").innerHTML={list:pgList,map:pgMap,cuisines:pgCuisines,journal:pgJournal,stats:pgStats}[page]();
+}
+function goTo(i){page="list";view="all";try{history.replaceState(null,"","#list")}catch(e){}render();const el=$("p"+i);if(el){el.classList.add("hit");el.scrollIntoView({block:"center"});setTimeout(()=>el.classList.remove("hit"),2400)}}
+function pick(){
+  let c=P.map((p,i)=>i).filter(i=>!done[i]&&(!meal||MEAL[i].includes(meal)));
+  const box=$("pick");if(!box)return;box.classList.add("show");
+  if(!c.length){box.innerHTML="<small>All done</small><p>Nothing left for that meal. Try another.</p>";return}
+  const near=c.filter(i=>P[i][1]!==9);if(near.length&&Math.random()<.85)c=near;
+  const top=c.filter(i=>P[i][4]===3);if(top.length&&Math.random()<.7)c=top;
+  const i=c[Math.floor(Math.random()*c.length)],p=P[i];
+  box.innerHTML='<small>Tonight</small><h3>'+bullet(p[1])+'<span>'+EMO[i]+" "+esc(p[0])+'</span></h3><p>'+esc(p[7])+" Order "+esc(p[8].charAt(0).toLowerCase()+p[8].slice(1))+". "+esc(HOODS[p[2]])+", "+far(p[2])+", "+"$".repeat(p[3])+'.</p><button type="button" data-go="'+i+'">Show us</button><button type="button" class="q" data-pick="1">Somewhere else</button>';
+}
+document.addEventListener("click",e=>{
+  const t=e.target.closest("[data-tick],[data-fav],[data-go],[data-view],[data-meal],[data-pick],[data-hood],[data-cty],[data-line]");if(!t)return;
+  const d=t.dataset,y=window.scrollY;
+  if(d.tick!==undefined){const i=+d.tick;if(done[i]){delete done[i];fav.delete(i)}else done[i]={d:today(),n:""};store();render();window.scrollTo(0,y);
+    if(done[i]){const inp=document.querySelector('[data-note="'+i+'"]');if(inp)inp.focus({preventScroll:true})}}
+  else if(d.fav!==undefined){const i=+d.fav;fav.has(i)?fav.delete(i):fav.add(i);store();render();window.scrollTo(0,y)}
+  else if(d.go!==undefined)goTo(+d.go);
+  else if(d.view){view=d.view;render();window.scrollTo(0,y)}
+  else if(d.meal!==undefined){meal=d.meal;render();window.scrollTo(0,y)}
+  else if(d.pick)pick();
+  else if(d.hood){selHood=d.hood;render();window.scrollTo(0,y)}
+  else if(d.cty){selCty=selCty===d.cty?"":d.cty;render();window.scrollTo(0,y)}
+  else if(d.line!==undefined){e.preventDefault();page="list";view="all";try{history.replaceState(null,"","#list")}catch(x){}render();const el=$("line-"+LET[+d.line]);if(el)el.scrollIntoView()}
+});
+document.addEventListener("keydown",e=>{if((e.key==="Enter"||e.key===" ")&&e.target.dataset&&e.target.dataset.hood){e.preventDefault();selHood=e.target.dataset.hood;render()}});
+document.addEventListener("change",e=>{const t=e.target;if(t.dataset&&t.dataset.note!==undefined&&done[+t.dataset.note]){done[+t.dataset.note].n=t.value.trim();store()}});
+function route(){const h=(location.hash||"").slice(1);if(PAGES.some(p=>p[0]===h)&&h!==page){page=h;render();window.scrollTo(0,0)}}
+window.addEventListener("hashchange",route);
+$("copy").onclick=()=>{
+  const ids=Object.keys(done).map(Number).sort((a,b)=>a-b);
+  const txt="DOWNTOWN 101: "+ids.length+" down, "+(N-ids.length)+" to go\n\nDONE\n"+(ids.map(i=>(fav.has(i)?"♥ ":"")+P[i][0]+(done[i].d?" ("+nice(done[i].d)+")":"")+(done[i].n?": "+done[i].n:"")).join("\n")||"Nothing yet.")+"\n\nSTILL TO GO\n"+P.map((p,i)=>done[i]?null:p[0]+" ("+HOODS[p[2]]+")").filter(Boolean).join("\n");
+  const out=$("copyout");out.value=txt;out.style.display="block";
+  try{navigator.clipboard.writeText(txt).then(()=>{$("copy").textContent="Copied"},()=>out.select())}catch(e){out.select()}
+};
+$("bench").textContent="Just missed: "+BENCH.map(b=>b[0]).join(", ")+".";
+function start(seed){load(seed);const h=new Date().getHours();meal=h<11?"B":h<15?"L":h<17?"S":"D";const g=(location.hash||"").slice(1);if(PAGES.some(p=>p[0]===g))page=g;render()}
+const hot=window.claude&&window.claude.hot;
+if(hot&&hot.snapshot)hot.snapshot(()=>({done,fav:[...fav]}));
+if(hot&&hot.ready)hot.ready(start);else start((hot&&hot.data)||{});
+</script>
+</body>
+</html>
