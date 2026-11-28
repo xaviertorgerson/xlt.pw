@@ -40,6 +40,7 @@ h2 { font-size: 1.05rem; font-weight: 600; letter-spacing: 0; color: var(--ink-2
 .list a { font-family: var(--display); font-weight: 550; font-size: 1.2rem; letter-spacing: -0.01em; text-decoration: none; color: var(--ink); }
 .list a:hover { color: var(--accent); }
 .list span, .list time { color: var(--ink-2); font-size: 1rem; }
+.list span a { font: inherit; letter-spacing: 0; color: var(--accent); text-decoration: underline; }
 .empty { color: var(--ink-2); font-style: italic; }
 
 /* A post. */
