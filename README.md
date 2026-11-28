@@ -50,3 +50,11 @@ earlier "ProLink" draft and an old Variadic Group pitch. They are kept, not lost
 `storytelling.html` (The Architecture of Story) stays at its address.
 
 The display face is Funnel Display, self-hosted under the SIL Open Font License (`fonts/`).
+
+## Downtown 101
+
+`downtown-101/` is one self-contained page, `index.html`, plus `og.png` for link previews: a checklist
+of 101 places to eat in downtown Manhattan. The list, the copy and the script are all in that file.
+Ticks and notes are stored in the visitor's own browser (`localStorage`); nothing is sent anywhere.
+
+The page's canonical address, and the address in its link preview, is `https://xlt.pw/downtown-101/`.
