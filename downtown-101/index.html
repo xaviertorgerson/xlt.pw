@@ -206,6 +206,23 @@ h1,h2,h3{font-family:var(--display);font-weight:800}
 .big b{font-family:var(--display);font-weight:800}
 footer{background:#111114}
 footer h4{color:var(--butter)}
+
+/* ---- tracks ---- */
+.ln > header .no{display:grid;place-items:center;width:62px;height:62px;border-radius:50%;background:var(--t);color:var(--c);font-size:34px;line-height:1;opacity:1;letter-spacing:-.04em;align-self:center}
+.ln .ct.full{background:var(--t);color:var(--c);border-radius:999px;padding:3px 10px;text-transform:uppercase;letter-spacing:.06em;font-size:12px}
+.track{margin-top:6px}
+.st{border-bottom:0;padding:16px 4px 18px}
+.st::after{content:"";position:absolute;left:19px;top:46px;bottom:-26px;width:8px;border-radius:4px;background:var(--c);opacity:.2}
+.st.done:has(+ .st.done)::after{opacity:1}
+.st:last-child::after,.track.plain .st::after{display:none}
+.track.plain .st{border-bottom:1px solid var(--line)}
+.track.plain .st:last-child{border-bottom:0}
+.ring{position:relative;z-index:1;background:var(--paper)}
+.st.done .ring{background:var(--c)}
+.st > div{border-bottom:1px solid var(--line);padding-bottom:16px}
+.st:last-child > div,.track.plain .st > div{border-bottom:0;padding-bottom:0}
+.st.hit{box-shadow:none;background:none}
+.st.hit > div{background:var(--card);box-shadow:0 0 0 8px var(--card);border-radius:6px}
 </style>
 </head>
 <body>
@@ -401,7 +418,7 @@ function pgList(){
   SECS.forEach((s,k)=>{
     const g=P.map((p,i)=>i).filter(i=>P[i][1]===k&&shows(i));if(!g.length)return;any=true;
     const all=P.filter(p=>p[1]===k).length,dn=P.filter((p,i)=>p[1]===k&&done[i]).length;
-    h+='<section class="ln" id="line-'+LET[k]+'" style="--c:'+COL[k]+';--t:'+TXT[k]+'"><header><span class="no">'+String(k+1).padStart(2,"0")+'</span><h2>'+esc(s)+'</h2><span class="ct">'+dn+" of "+all+'</span><p>'+esc(INTRO[k])+'</p></header><ul class="track">'+g.map(i=>station(P[i],i,false)).join("")+'</ul></section>';
+    h+='<section class="ln" id="line-'+LET[k]+'" style="--c:'+COL[k]+';--t:'+TXT[k]+'"><header><span class="no">'+(k+1)+'</span><h2>'+esc(s)+'</h2><span class="ct'+(dn===all?" full":"")+'">'+(dn===all?"Line complete":dn+" of "+all)+'</span><p>'+esc(INTRO[k])+'</p></header><ul class="track">'+g.map(i=>station(P[i],i,false)).join("")+'</ul></section>';
   });
   if(!any)h+='<div class="empty"><b>'+(view==="done"?"No stations filled in yet.":view==="fav"?"No favorites yet.":"That is all of them.")+'</b>'+(view==="done"?"Dinner tonight?":view==="fav"?"Fill in a station, then give it a heart.":"")+'</div>';
   return h;
@@ -410,8 +427,9 @@ function pgMap(){
   let svg='<svg viewBox="0 0 380 520" role="img" aria-label="Schematic map of the ten lines through fifteen neighborhoods">';
   SECS.forEach((s,k)=>{
     const hs=Object.keys(POS).filter(h=>P.some(p=>p[1]===k&&p[2]===h)).sort((a,b)=>POS[a][1]-POS[b][1]||POS[a][0]-POS[b][0]);
-    if(hs.length<2)return;const o=(k-4.5)*2.6;
-    svg+='<polyline fill="none" stroke="'+COL[k]+'" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round" points="'+hs.map(h=>(POS[h][0]+o)+","+(POS[h][1]+o*.35)).join(" ")+'"/>';
+    if(hs.length<2)return;const o=(k-4.5)*2.6,pt=h=>(POS[h][0]+o)+","+(POS[h][1]+o*.35),has=h=>P.some((p,i)=>p[1]===k&&p[2]===h&&done[i]);
+    svg+='<polyline fill="none" stroke="'+COL[k]+'" stroke-width="2.2" stroke-dasharray="1 5" stroke-linecap="round" points="'+hs.map(pt).join(" ")+'"/>';
+    for(let j=0;j<hs.length-1;j++)if(has(hs[j])&&has(hs[j+1]))svg+='<polyline fill="none" stroke="'+COL[k]+'" stroke-width="3.6" stroke-linecap="round" points="'+pt(hs[j])+" "+pt(hs[j+1])+'"/>';
   });
   Object.keys(POS).forEach(h=>{
     const ids=P.map((p,i)=>i).filter(i=>P[i][2]===h),dn=ids.filter(i=>done[i]).length,x=POS[h][0],y=POS[h][1],r=9+Math.min(ids.length,20)*.45,d=LP[h];
@@ -423,7 +441,7 @@ function pgMap(){
   });
   svg+='</svg>';
   const ids=P.map((p,i)=>i).filter(i=>P[i][2]===selHood).sort((a,b)=>P[b][4]-P[a][4]);
-  return '<div class="ph"><h2>The map</h2><p>Fifteen neighborhoods, ten colors. Not to scale; north is up. Tap a neighborhood to see who lives there.</p></div><div class="mapbox">'+svg+'</div>'+listOf(ids,HOODS[selHood]);
+  return '<div class="ph"><h2>The map</h2><p>Fifteen stops, ten lines. A dotted line is track we have not ridden; it turns solid between two neighborhoods once we have eaten on that line in both. Not to scale; north is up.</p></div><div class="mapbox">'+svg+'</div>'+listOf(ids,HOODS[selHood]);
 }
 function pgCuisines(){
   const tried=new Set(Object.keys(done).map(i=>P[i][5]));
