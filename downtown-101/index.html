@@ -223,6 +223,29 @@ footer h4{color:var(--butter)}
 .st:last-child > div,.track.plain .st > div{border-bottom:0;padding-bottom:0}
 .st.hit{box-shadow:none;background:none}
 .st.hit > div{background:var(--card);box-shadow:0 0 0 8px var(--card);border-radius:6px}
+
+/* ---- slim entry, verdicts, photos ---- */
+.memo{display:block;margin-top:10px}
+.m1{display:flex;align-items:baseline;gap:10px;font-family:var(--hand);font-size:25px;line-height:1.1;color:var(--red)}
+.m1 .when{white-space:nowrap}
+.m1 input{flex:1;min-width:0}
+.m2{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:8px;font-family:var(--sans)}
+.m2.wide{grid-column:2}
+.vd{background:none;border:1px solid var(--line);border-radius:999px;padding:3px 11px;font-size:13.5px;color:var(--soft)}
+.vd[aria-pressed="true"]{background:var(--red);border-color:var(--red);color:#fff;font-weight:600}
+.tag{border-radius:999px;padding:3px 10px;font-size:13px;background:var(--card);color:var(--ink)}
+.tag.on{background:var(--red);color:#fff;font-weight:600}
+.addph{border:1px dashed var(--soft);border-radius:999px;padding:3px 11px;font-size:13.5px;color:var(--soft);cursor:pointer}
+.addph:focus-within{outline:3px solid var(--butter)}
+.ph{position:relative;display:inline-block;line-height:0}
+.ph img{width:46px;height:46px;object-fit:cover;border-radius:8px;display:block}
+.ph.big img{width:132px;height:132px;border-radius:12px}
+.ph button{position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;border:0;background:var(--ink);color:var(--paper);font-size:13px;line-height:1;padding:0}
+.roll{display:flex;gap:8px;margin-top:16px;overflow-x:auto;scrollbar-width:none}
+.roll:empty{display:none}
+.roll button{flex:none;border:3px solid #fff;border-radius:10px;padding:0;background:none;line-height:0;transform:rotate(-2deg)}
+.roll button:nth-child(even){transform:rotate(2deg)}
+.roll img{width:84px;height:84px;object-fit:cover;border-radius:7px}
 </style>
 </head>
 <body>
@@ -232,6 +255,7 @@ footer h4{color:var(--butter)}
   <p class="say">The 101 places we are eating our way through. No tasting menus, nothing you book a month out. Fill in a ring every time we go.</p>
   <div class="tally" id="tally"></div>
   <div class="holes" id="holes" aria-label="One dot per place"></div>
+  <div class="roll" id="roll" aria-label="Our latest photos"></div>
 </div><nav class="stripes" id="stripes" aria-label="Lines"></nav></header>
 <div class="tabs"><div class="wrap" id="tabs"></div></div>
 
@@ -240,7 +264,7 @@ footer h4{color:var(--butter)}
 <footer><div class="wrap"><div class="cols">
   <div><h4>Reading it</h4><p>★★★ cross town for it. ★★ go when the mood fits. ★ good to know.</p><p>$ is under 25 dollars each, $$ up to 60, $$$ up to 120, $$$$ a splurge. Distances are from SoHo and rough.</p></div>
   <div><h4>Getting a table</h4><p>Arrive within fifteen minutes of opening, or after 9:15, and ask for the bar. Carry cash.</p><p id="bench"></p></div>
-  <div><h4>Ours</h4><p>Stations and notes are kept in this browser only.</p><p><button type="button" id="copy">Copy our list as text</button></p><textarea id="copyout" readonly aria-label="Our list as text"></textarea><p>All open as of November 27, 2026; check hours before a long trip.</p></div>
+  <div><h4>Ours</h4><p>Stations, notes and photos are kept in this browser only.</p><p><a href="https://github.com/xaviertorgerson/downtown-101/issues/new">Suggest a place or a correction</a></p><p><button type="button" id="copy">Copy our list as text</button></p><textarea id="copyout" readonly aria-label="Our list as text"></textarea><p>All open as of November 27, 2026; check hours before a long trip.</p></div>
 </div></div></footer>
 <script>
 const SECS=["East Asian","Southeast Asian and Indian","Mediterranean, Middle Eastern and seafood","The rest of the map","Tacos and Latin","Everyday counters","Bistros and downtown rooms","Italian and pizza","Old New York and taverns","Far away but worth it"];
@@ -406,8 +430,18 @@ function station(p,i,kind){
   '<div class="ti"><span class="emo" aria-hidden="true">'+EMO[i]+'</span><h3>'+esc(p[0])+'</h3><span class="stars" aria-label="'+p[4]+' stars">'+"★".repeat(p[4])+'</span></div>'+
   '<div class="meta">'+(kind?bullet(k):"")+'<span>'+esc(HOODS[p[2]])+'</span><b>'+"$".repeat(p[3])+'</b><span>'+far(p[2])+'</span><span>'+esc(p[5])+'</span></div>'+
   '<p>'+esc(p[7])+'</p><p class="how"><span><em>Order</em>'+esc(p[8])+'</span><span><em>Getting in</em>'+esc(p[9])+'</span></p>'+
-  (d?'<div class="memo"><span>'+(d.d?esc(nice(d.d)):"Done")+'</span><input type="text" data-note="'+i+'" value="'+esc(d.n||"")+'" placeholder="what we had, who was right" aria-label="Our note on '+esc(p[0])+'"><button class="heart" type="button" data-fav="'+i+'" aria-pressed="'+f+'" aria-label="Favorite">'+(f?"♥":"♡")+'</button></div>':"")+
+  (d?memo(i):"")+
   '</div></li>';
+}
+const VERD=["Skip it","Solid","Loved it"];
+function parse(n){const o={};let m=(n||"").match(/(\d+(?:\.\d+)?)\s*\/\s*(10|5)\b/);if(m)o.s=Math.min(10,Math.round(+m[1]/+m[2]*100)/10);m=(n||"").match(/\b(?:had|ordered|got|shared|split)\s+(?:the\s+)?([^.,;!?]+)/i);if(m)o.h=m[1].trim().slice(0,48);return o}
+function thumbs(i,big){const ph=photos[P[i][0]]||[];return ph.map((u,j)=>'<span class="ph'+(big?" big":"")+'"><img src="'+u+'" alt="Our photo from '+esc(P[i][0])+'">'+(big?"":'<button type="button" data-rm="'+i+":"+j+'" aria-label="Remove photo">×</button>')+'</span>').join("")}
+function memo(i){
+  const d=done[i],x=parse(d.n),n=(photos[P[i][0]]||[]).length;
+  return '<div class="memo"><div class="m1"><span class="when">'+(d.d?esc(nice(d.d)):"Done")+'</span><input type="text" data-note="'+i+'" value="'+esc(d.n||"")+'" placeholder="had the…, 8/10, who was right" aria-label="Our note on '+esc(P[i][0])+'"></div>'+
+  '<div class="m2">'+VERD.map((v,k)=>'<button type="button" class="vd" data-v="'+i+":"+k+'" aria-pressed="'+(d.v===k)+'">'+v+'</button>').join("")+
+  (x.s!==undefined?'<span class="tag">'+x.s+' / 10</span>':"")+(x.h?'<span class="tag">had '+esc(x.h)+'</span>':"")+thumbs(i,false)+
+  (n<4?'<label class="addph">+ photo<input type="file" accept="image/*" multiple data-photo="'+i+'" hidden></label>':"")+'</div></div>';
 }
 const listOf=(ids,title)=>'<section class="band"><h3>'+esc(title)+'<span>'+ids.filter(i=>done[i]).length+" of "+ids.length+'</span></h3><ul class="track plain">'+ids.map(i=>station(P[i],i,true)).join("")+'</ul></section>';
 function shows(i){const d=!!done[i];return view==="all"||(view==="todo"&&!d)||(view==="done"&&d)||(view==="fav"&&fav.has(i))}
@@ -458,7 +492,7 @@ function pgJournal(){
   const ids=Object.keys(done).map(Number).sort((a,b)=>(done[b].d||"").localeCompare(done[a].d||"")||a-b);
   let h='<div class="ph"><h2>Our notes</h2><p>Everything we have eaten, newest first, with what we wrote down at the time.</p></div>';
   if(!ids.length)return h+'<div class="empty"><b>Nothing yet.</b>Fill in a station on the lines and write one line about it. It shows up here.</div>';
-  return h+ids.map(i=>'<div class="entry"><span class="when">'+(done[i].d?esc(nice(done[i].d)):"")+'</span><h3>'+bullet(P[i][1])+'<span>'+EMO[i]+" "+esc(P[i][0])+'</span>'+(fav.has(i)?'<span style="color:#d0261f">♥</span>':"")+'</h3>'+(done[i].n?'<div class="note">'+esc(done[i].n)+'</div>':'<div class="none">No note. <button type="button" class="meal" data-go="'+i+'">Add one</button></div>')+'</div>').join("");
+  return h+ids.map(i=>'<div class="entry"><span class="when">'+(done[i].d?esc(nice(done[i].d)):"")+'</span><h3>'+bullet(P[i][1])+'<span>'+EMO[i]+" "+esc(P[i][0])+'</span>'+(fav.has(i)?'<span style="color:#d0261f">♥</span>':"")+'</h3>'+(done[i].n?'<div class="note">'+esc(done[i].n)+'</div>':"")+'<div class="m2 wide">'+(done[i].v!==undefined?'<span class="tag on">'+VERD[done[i].v]+'</span>':"")+(parse(done[i].n).s!==undefined?'<span class="tag">'+parse(done[i].n).s+' / 10</span>':"")+thumbs(i,true)+((!done[i].n||!(photos[P[i][0]]||[]).length)?'<button type="button" class="vd" data-go="'+i+'">'+(!done[i].n?"Add a note":"Add a photo")+'</button>':"")+'</div></div>').join("");
 }
 function pgStats(){
   const ids=Object.keys(done).map(Number),n=ids.length;
@@ -475,6 +509,9 @@ function pgStats(){
     h+='<li>Home turf: <b>'+esc(HOODS[topHood])+'</b>, with '+hood[topHood]+'.</li>';
     h+='<li>Three-star stations done: <b>'+ids.filter(i=>P[i][4]===3).length+'</b> of '+P.filter(p=>p[4]===3).length+'.</li>';
     h+='<li>Trips off the island or uptown: <b>'+ids.filter(i=>P[i][1]===9).length+'</b>.</li>';
+    const sc=ids.map(i=>parse(done[i].n).s).filter(v=>v!==undefined),np=ids.reduce((a,i)=>a+(photos[P[i][0]]||[]).length,0);
+    h+='<li>Notes written: <b>'+ids.filter(i=>done[i].n).length+'</b> of '+n+'. Photos kept: <b>'+np+'</b>.</li>';
+    if(sc.length)h+='<li>Average score from our notes: <b>'+(Math.round(sc.reduce((a,b)=>a+b,0)/sc.length*10)/10)+' / 10</b> across '+sc.length+'.</li>';
     if(dates.length)h+='<li>First station: <b>'+esc(nice(dates[0]))+'</b>. Latest: <b>'+esc(nice(dates[dates.length-1]))+'</b>.</li>';
     const lines=SECS.filter((s,k)=>P.every((p,i)=>p[1]!==k||done[i]));if(lines.length)h+='<li>Lines finished: <b>'+lines.map(esc).join(", ")+'</b>.</li>';
   }
@@ -484,6 +521,8 @@ function render(){
   const n=Object.keys(done).length;
   $("tally").textContent=n===0?"0 down, "+N+" to go":n===N?"All "+N+". We did it.":n+" down, "+(N-n)+" to go";
   const hs=$("holes");hs.textContent="";P.forEach((p,i)=>{const b=document.createElement("button");b.type="button";b.className="h"+(done[i]?" on":"");b.title=p[0];b.setAttribute("aria-label",p[0]+(done[i]?", done":""));b.dataset.go=i;hs.append(b)});
+  const all=[];Object.keys(done).forEach(i=>(photos[P[i][0]]||[]).forEach(u=>all.push([u,+i])));
+  $("roll").innerHTML=all.slice(-8).reverse().map(a=>'<button type="button" data-go="'+a[1]+'" aria-label="'+esc(P[a[1]][0])+'"><img src="'+a[0]+'" alt=""></button>').join("");
   $("stripes").innerHTML=SECS.map((s,k)=>{const all=P.filter(p=>p[1]===k).length,dn=P.filter((p,i)=>p[1]===k&&done[i]).length;return '<a href="#list" data-line="'+k+'" style="--n:'+all+';--c:'+COL[k]+';--t:'+TXT[k]+';--p:'+(dn/all*100)+'%" title="'+esc(s)+'" aria-label="'+esc(s)+", "+dn+" of "+all+'"><i>'+LET[k]+'</i></a>'}).join("");
   $("tabs").innerHTML=PAGES.map(p=>'<a class="tab" href="#'+p[0]+'"'+(page===p[0]?' aria-current="page"':"")+'>'+p[1]+(p[0]==="journal"&&n?" · "+n:"")+'</a>').join("");
   $("main").innerHTML={list:pgList,map:pgMap,cuisines:pgCuisines,journal:pgJournal,stats:pgStats}[page]();
@@ -499,10 +538,12 @@ function pick(){
   box.innerHTML='<small>Tonight</small><h3>'+bullet(p[1])+'<span>'+EMO[i]+" "+esc(p[0])+'</span></h3><p>'+esc(p[7])+" Order "+esc(p[8].charAt(0).toLowerCase()+p[8].slice(1))+". "+esc(HOODS[p[2]])+", "+far(p[2])+", "+"$".repeat(p[3])+'.</p><button type="button" data-go="'+i+'">Show us</button><button type="button" class="q" data-pick="1">Somewhere else</button>';
 }
 document.addEventListener("click",e=>{
-  const t=e.target.closest("[data-tick],[data-fav],[data-go],[data-view],[data-meal],[data-pick],[data-hood],[data-cty],[data-line]");if(!t)return;
+  const t=e.target.closest("[data-tick],[data-v],[data-rm],[data-fav],[data-go],[data-view],[data-meal],[data-pick],[data-hood],[data-cty],[data-line]");if(!t)return;
   const d=t.dataset,y=window.scrollY;
-  if(d.tick!==undefined){const i=+d.tick;if(done[i]){delete done[i];fav.delete(i)}else done[i]={d:today(),n:""};store();render();window.scrollTo(0,y);
+  if(d.tick!==undefined){const i=+d.tick;if(done[i]){delete done[i];fav.delete(i);delete photos[P[i][0]];savePhotos(P[i][0])}else done[i]={d:today(),n:""};store();render();window.scrollTo(0,y);
     if(done[i]){const inp=document.querySelector('[data-note="'+i+'"]');if(inp)inp.focus({preventScroll:true})}}
+  else if(d.v!==undefined){const a=d.v.split(":"),i=+a[0],k=+a[1];if(done[i]){done[i].v=done[i].v===k?undefined:k;done[i].v===2?fav.add(i):fav.delete(i);store();render();window.scrollTo(0,y)}}
+  else if(d.rm!==undefined){const a=d.rm.split(":"),nm=P[+a[0]][0];(photos[nm]||[]).splice(+a[1],1);savePhotos(nm);render();window.scrollTo(0,y)}
   else if(d.fav!==undefined){const i=+d.fav;fav.has(i)?fav.delete(i):fav.add(i);store();render();window.scrollTo(0,y)}
   else if(d.go!==undefined)goTo(+d.go);
   else if(d.view){view=d.view;render();window.scrollTo(0,y)}
@@ -513,17 +554,27 @@ document.addEventListener("click",e=>{
   else if(d.line!==undefined){e.preventDefault();page="list";view="all";try{history.replaceState(null,"","#list")}catch(x){}render();const el=$("line-"+LET[+d.line]);if(el)el.scrollIntoView()}
 });
 document.addEventListener("keydown",e=>{if((e.key==="Enter"||e.key===" ")&&e.target.dataset&&e.target.dataset.hood){e.preventDefault();selHood=e.target.dataset.hood;render()}});
-document.addEventListener("change",e=>{const t=e.target;if(t.dataset&&t.dataset.note!==undefined&&done[+t.dataset.note]){done[+t.dataset.note].n=t.value.trim();store()}});
+document.addEventListener("change",e=>{const t=e.target;if(!t.dataset)return;
+  if(t.dataset.note!==undefined&&done[+t.dataset.note]){const y=window.scrollY;done[+t.dataset.note].n=t.value.trim();store();render();window.scrollTo(0,y)}
+  else if(t.dataset.photo!==undefined&&t.files&&t.files.length){const i=+t.dataset.photo,nm=P[i][0],y=window.scrollY;
+    Promise.all([...t.files].slice(0,4).map(shrink)).then(us=>{photos[nm]=(photos[nm]||[]).concat(us.filter(Boolean)).slice(0,4);savePhotos(nm);render();window.scrollTo(0,y)})}
+});
+// photos live in IndexedDB in this browser, shrunk first so a phone picture is a few hundred KB
+let photos={},pdb=null;
+function shrink(f){return new Promise(res=>{const img=new Image(),u=URL.createObjectURL(f);img.onload=()=>{const k=Math.min(1,1100/Math.max(img.width,img.height)),c=document.createElement("canvas");c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);c.getContext("2d").drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(u);try{res(c.toDataURL("image/jpeg",.82))}catch(e){res(null)}};img.onerror=()=>{URL.revokeObjectURL(u);res(null)};img.src=u})}
+function openDb(){return new Promise(res=>{try{const r=indexedDB.open("downtown-101",1);r.onupgradeneeded=()=>r.result.createObjectStore("photos");r.onsuccess=()=>res(r.result);r.onerror=()=>res(null)}catch(e){res(null)}})}
+function savePhotos(nm){if(!pdb)return;try{const st=pdb.transaction("photos","readwrite").objectStore("photos");(photos[nm]&&photos[nm].length)?st.put(photos[nm],nm):st.delete(nm)}catch(e){}}
+function loadPhotos(){return openDb().then(db=>{pdb=db;if(!db)return;return new Promise(res=>{try{const st=db.transaction("photos").objectStore("photos"),k=st.getAllKeys(),v=st.getAll();v.onsuccess=()=>{(k.result||[]).forEach((nm,j)=>photos[nm]=v.result[j]);res()};v.onerror=()=>res()}catch(e){res()}})})}
 function route(){const h=(location.hash||"").slice(1);if(PAGES.some(p=>p[0]===h)&&h!==page){page=h;render();window.scrollTo(0,0)}}
 window.addEventListener("hashchange",route);
 $("copy").onclick=()=>{
   const ids=Object.keys(done).map(Number).sort((a,b)=>a-b);
-  const txt="DOWNTOWN 101: "+ids.length+" down, "+(N-ids.length)+" to go\n\nDONE\n"+(ids.map(i=>(fav.has(i)?"♥ ":"")+P[i][0]+(done[i].d?" ("+nice(done[i].d)+")":"")+(done[i].n?": "+done[i].n:"")).join("\n")||"Nothing yet.")+"\n\nSTILL TO GO\n"+P.map((p,i)=>done[i]?null:p[0]+" ("+HOODS[p[2]]+")").filter(Boolean).join("\n");
+  const vt=i=>(done[i].v!==undefined?" ["+VERD[done[i].v]+"]":"");const txt="DOWNTOWN 101: "+ids.length+" down, "+(N-ids.length)+" to go\n\nDONE\n"+(ids.map(i=>(fav.has(i)?"♥ ":"")+P[i][0]+(done[i].d?" ("+nice(done[i].d)+")":"")+vt(i)+(done[i].n?": "+done[i].n:"")).join("\n")||"Nothing yet.")+"\n\nSTILL TO GO\n"+P.map((p,i)=>done[i]?null:p[0]+" ("+HOODS[p[2]]+")").filter(Boolean).join("\n");
   const out=$("copyout");out.value=txt;out.style.display="block";
   try{navigator.clipboard.writeText(txt).then(()=>{$("copy").textContent="Copied"},()=>out.select())}catch(e){out.select()}
 };
 $("bench").textContent="Just missed: "+BENCH.map(b=>b[0]).join(", ")+".";
-function start(seed){load(seed);const h=new Date().getHours();meal=h<11?"B":h<15?"L":h<17?"S":"D";const g=(location.hash||"").slice(1);if(PAGES.some(p=>p[0]===g))page=g;render()}
+function start(seed){load(seed);loadPhotos().then(()=>{if(Object.keys(photos).length)render()});const h=new Date().getHours();meal=h<11?"B":h<15?"L":h<17?"S":"D";const g=(location.hash||"").slice(1);if(PAGES.some(p=>p[0]===g))page=g;render()}
 const hot=window.claude&&window.claude.hot;
 if(hot&&hot.snapshot)hot.snapshot(()=>({done,fav:[...fav]}));
 if(hot&&hot.ready)hot.ready(start);else start((hot&&hot.data)||{});
