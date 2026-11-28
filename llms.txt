@@ -1,0 +1,19 @@
+# Xavier Torgerson
+
+> The personal site of Xavier Torgerson, who makes software and runs Variadic Group (https://variadicgroup.com). It holds his writing and a handful of projects, each a single page.
+
+## Projects
+
+- [Downtown 101](https://xlt.pw/downtown-101/): 101 places to eat in downtown Manhattan, as a checklist. The full list is in the page as plain HTML. Source: https://github.com/xaviertorgerson/downtown-101
+- [Murmuration](https://xlt.pw/murmuration/): a flock of starlings simulated in the browser. Source: https://github.com/xaviertorgerson/murmuration
+- [Shadowlite](https://xlt.pw/shadowlite/): a roguelike in the dark, where you see only what is lit.
+- [The Architecture of Story](https://xlt.pw/storytelling.html): an interactive course in narrative craft.
+
+## Writing
+
+- [Writing](https://xlt.pw/writing/): posts, newest first. Feed: https://xlt.pw/feed.xml
+
+## Elsewhere
+
+- [Variadic Group](https://variadicgroup.com/): the company.
+- [GitHub](https://github.com/xaviertorgerson)

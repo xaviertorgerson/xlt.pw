@@ -11,6 +11,12 @@ where it is developed and where it describes itself: what it is, why it exists, 
 how to publish it. New projects get a folder and a line in the Projects list on the home page, and
 nothing in this README.
 
+## Being found
+
+`robots.txt` allows everything and names `sitemap.xml`. `sitemap.xml` lists every page; `llms.txt` is
+the same map in prose for AI assistants. A new page or post goes in both. `og.png` is the link preview
+for the home page and any page without its own.
+
 ## Add a post
 
 1. Copy `writing/_post-template.html` to `writing/<slug>.html` and fill in the capitals.

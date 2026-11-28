@@ -7,7 +7,7 @@ This repo is a hosting mechanism, not a place where projects are documented.
 - A project folder in this repo (`downtown-101/`, `murmuration/`, `shadowlite/`) is a published copy
   of files from the project's repo. Do not edit the copy here; change the project's repo and copy
   the files over.
-- When adding a project, add its folder and one line in the Projects list in `index.html`. Do not
-  add a section about it to this repo's `README.md`.
+- When adding a project, add its folder, one line in the Projects list in `index.html`, its address in
+  `sitemap.xml` and one line in `llms.txt`. Do not add a section about it to this repo's `README.md`.
 - This README covers only the site itself: how it is served and how to add a post.
 - Changes go in on a branch through a pull request to `main`. GitHub Pages publishes `main`.
